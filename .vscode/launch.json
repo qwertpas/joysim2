@@ -1,0 +1,56 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Debug (Launch) - Current File",
+            "request": "launch",
+            "mainClass": "${file}"
+        },
+        {
+            "type": "java",
+            "name": "Debug (Launch)-App<diffsim2>",
+            "request": "launch",
+            "mainClass": "org.chis.sim.App",
+            "projectName": "diffsim2"
+        },
+        {
+            "type": "java",
+            "name": "Debug (Launch)-Controls<diffsim2>",
+            "request": "launch",
+            "mainClass": "org.chis.sim.Controls",
+            "projectName": "diffsim2"
+        },
+        {
+            "type": "java",
+            "name": "Debug (Launch)-GraphicInput<diffsim2>",
+            "request": "launch",
+            "mainClass": "org.chis.sim.GraphicInput",
+            "projectName": "diffsim2"
+        },
+        {
+            "type": "java",
+            "name": "Debug (Launch)-Main<diffsim2>",
+            "request": "launch",
+            "mainClass": "org.chis.sim.Main",
+            "projectName": "diffsim2"
+        },
+        {
+            "type": "java",
+            "name": "Debug (Launch)-Motor<diffsim2>",
+            "request": "launch",
+            "mainClass": "org.chis.sim.Motor",
+            "projectName": "diffsim2"
+        },
+        {
+            "type": "java",
+            "name": "Debug (Launch)-Util$MotionProfile<diffsim2>",
+            "request": "launch",
+            "mainClass": "org.chis.sim.Util$MotionProfile",
+            "projectName": "diffsim2"
+        }
+    ]
+}
