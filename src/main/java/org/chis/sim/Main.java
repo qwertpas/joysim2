@@ -1,8 +1,5 @@
 package org.chis.sim;
 
-
-
-
 public class Main {
 
     public static Boolean paused = true;
@@ -16,7 +13,6 @@ public class Main {
 
 
     public static void main(String[] args) {
-
         robot = new Robot();
 
         GraphicSim.init();

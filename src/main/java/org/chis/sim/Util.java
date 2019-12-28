@@ -259,8 +259,6 @@ public class Util {
   private static double mQuickStopAccumlator = 0.0;
   private static double mNegInertiaAccumlator = 0.0;
 
-  private static boolean isQuickTurning = false;
-  private static boolean isInHighGear = false;
 
   public static double senscurve(double val, double exponent) {
     return Math.copySign(Math.pow(Math.abs(val), exponent), val);
