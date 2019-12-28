@@ -2,6 +2,8 @@ package org.chis.sim;
 
 import java.text.DecimalFormat;
 
+import org.chis.sim.Util.Vector2D.Type;
+
 public class Util {
 
   public static double applyFrictions(double force, double velocity, double STATIC_FRIC, double KINE_FRIC,
@@ -396,6 +398,8 @@ public class Util {
       }
     }
 
+    
+
     //unit vector
     Vector2D(double direction){
       x = Math.cos(direction);
@@ -458,6 +462,11 @@ public class Util {
       return "(" + Util.roundHundreths(x) + ", " + Util.roundHundreths(y) + ")";
     }
 
+  }
+
+  public static void main(String[] args) {
+    Vector2D vec = new Vector2D(Math.PI);
+    System.out.println(vec.dotProduct(new Vector2D(100, 0, Type.CARTESIAN)));
   }
 
 

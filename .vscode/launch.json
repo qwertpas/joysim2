@@ -6,6 +6,20 @@
     "configurations": [
         {
             "type": "java",
+            "name": "CodeLens (Launch) - Util",
+            "request": "launch",
+            "mainClass": "org.chis.sim.Util",
+            "projectName": "diffsim2"
+        },
+        {
+            "type": "java",
+            "name": "CodeLens (Launch) - Util$Vector2D",
+            "request": "launch",
+            "mainClass": "org.chis.sim.Util$Vector2D",
+            "projectName": "diffsim2"
+        },
+        {
+            "type": "java",
             "name": "Debug (Launch) - Current File",
             "request": "launch",
             "mainClass": "${file}"

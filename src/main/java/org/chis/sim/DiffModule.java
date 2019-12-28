@@ -16,6 +16,8 @@ class DiffModule {
     double moduleAngle = 0;
 
     double wheelTorque;
+    double driveForce;
+    double scrubForce;
 
     Vector2D force = new Vector2D();
 
@@ -33,19 +35,18 @@ class DiffModule {
         wheelScrubVelo = (new Vector2D(moduleAngle)).rotate(Math.PI/2.0).dotProduct(moduleTranslation); // component of the movement perperdicular to the wheel
         // wheelTanVelo = moduleTranslation.x; // tangential velocity of the wheel
 
-        wheelAngVelo = wheelTanVelo / Constants.WHEEL_RADIUS.getDouble(); // tangential velocity = radius * angular
-                                                                          // velocity
+        wheelAngVelo = wheelTanVelo / Constants.WHEEL_RADIUS.getDouble(); // tangential velocity = radius * angular velocity
 
         updateMotorSpeeds();
         updateModuleAngle();
 
         wheelTorque = (topMotor.getTorque() - bottomMotor.getTorque()) * Constants.GEAR_RATIO.getDouble();
 
-        wheelTorque = Util.applyFrictions(wheelTorque, wheelAngVelo, 1, 1, 0.01);
+        wheelTorque = Util.applyFrictions(wheelTorque, wheelAngVelo, 0.1, 0.1, 0.001);
 
-        double driveForce = wheelTorque / Constants.WHEEL_RADIUS.getDouble(); // F=ma
-        double fricForce = Util.applyFrictions(0, wheelScrubVelo, Constants.WHEEL_STATIC_FRIC, Constants.WHEEL_KINE_FRIC, Constants.WHEEL_FRIC_THRESHOLD.getDouble());
-        force = new Vector2D(driveForce, fricForce, Vector2D.Type.CARTESIAN);
+        driveForce = wheelTorque / Constants.WHEEL_RADIUS.getDouble(); // F=ma
+        scrubForce = Util.applyFrictions(0, wheelScrubVelo, Constants.WHEEL_STATIC_FRIC, Constants.WHEEL_KINE_FRIC, Constants.WHEEL_FRIC_THRESHOLD.getDouble());
+        force = new Vector2D(driveForce, scrubForce, Vector2D.Type.CARTESIAN).rotate(moduleAngle);
     }
 
     void setTranslation(Vector2D moduleTranslation_input) {
@@ -57,6 +58,7 @@ class DiffModule {
         lastTime = System.nanoTime();
 
         double moduleTorque = topMotor.torque + bottomMotor.torque;
+        moduleTorque = Util.applyFrictions(moduleTorque, moduleAngVelo, 1, 1, 0.001);
         double moduleAngAccel = moduleTorque / Constants.MODULE_ROT_INERTIA.getDouble();
         moduleAngVelo = moduleAngAccel * dt + moduleAngVelo; // integration
         moduleAngle = moduleAngVelo * dt + moduleAngle; // second integration

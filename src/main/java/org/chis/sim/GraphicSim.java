@@ -60,10 +60,10 @@ public class GraphicSim extends JPanel implements MouseListener {
 
 		// g.drawString("torque net " + Util.roundHundreths(Main.robot.torqueNet), 500, 575);
 		g.drawString("heading " + Util.roundHundreths(Main.robot.heading), 500, 600);
-		g.drawString("linvelo x " + Util.roundHundreths(Main.robot.linVelo.x), 500, 625);
-		g.drawString("linvelo y " + Util.roundHundreths(Main.robot.linVelo.y), 500, 650);
-		g.drawString("leftModTrans "+ Main.robot.leftModule.moduleTranslation, 500, 675);
-		g.drawString("rightModTrans "+ Main.robot.rightModule.moduleTranslation, 500, 700);
+		g.drawString("L tanvelo " + Util.roundHundreths(Main.robot.leftModule.wheelTanVelo), 500, 625);
+		g.drawString("R tanvelo " + Util.roundHundreths(Main.robot.rightModule.wheelTanVelo), 500, 650);
+		g.drawString("leftDriveForce "+ Main.robot.leftModule.driveForce, 500, 675);
+		g.drawString("rigthDriveForce "+ Main.robot.rightModule.driveForce, 500, 700);
 		g.drawString("L module angle " + Util.roundHundreths(Main.robot.leftModule.moduleAngle), 500, 725);
 		g.drawString("R module angle " + Util.roundHundreths(Main.robot.rightModule.moduleAngle), 500, 750);
 		// g.drawString("LT motor speed " + Util.roundHundreths(Main.robot.leftModule.topMotor.angVelo), 500, 775);
@@ -85,16 +85,16 @@ public class GraphicSim extends JPanel implements MouseListener {
 		int robotCenterX = x + robotDisplayWidth/2;
 		int robotCenterY = y + robotDisplayWidth/2;
 
-		g2d.rotate(-Main.robot.heading, robotCenterX, robotCenterY);
+		g2d.rotate(-Main.robot.heading, robotCenterX, robotCenterY); //angle is negative because g2d counts clockwise positive
 
 		g2d.scale(robotScale, robotScale);
 		g.translate((int) (x / robotScale), (int) (y / robotScale));
 		g.drawImage(robotImage, 0, 0, this);
 
 
-		drawFromCenter(g, moduleImage, 0, robotDisplayWidth/2, Main.robot.leftModule.moduleAngle, this);
+		drawFromCenter(g, moduleImage, 0, robotDisplayWidth/2, -Main.robot.leftModule.moduleAngle, this);
 
-		drawFromCenter(g, moduleImage, robotDisplayWidth, robotDisplayWidth/2, Main.robot.rightModule.moduleAngle, this);
+		drawFromCenter(g, moduleImage, robotDisplayWidth, robotDisplayWidth/2, -Main.robot.rightModule.moduleAngle, this);
 
 
 
@@ -125,7 +125,8 @@ public class GraphicSim extends JPanel implements MouseListener {
 		frame = new JFrame("Robot Sim");
 		sim = new GraphicSim();
 		frame.add(sim);
-		frame.setSize((int) screenWidth, (int) screenHeight);
+		frame.setSize((int) screenWidth-200, (int) screenHeight);
+		frame.setLocation(200, 0);
 		frame.setVisible(true);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	}
