@@ -59,7 +59,8 @@ public class Robot{
 
     private double calcRobotTorque(Vector2D forceL, Vector2D forceR){
         torqueMotors = (forceR.x - forceL.x) * Constants.HALF_DIST_BETWEEN_WHEELS; //torque around center of robot
-        torqueNet = Util.applyFrictions(torqueMotors, angVelo, Constants.ROT_STATIC_FRIC.getDouble(), Constants.ROT_KINE_FRIC.getDouble(), Constants.ROT_FRIC_THRESHOLD.getDouble());
+        // torqueNet = Util.applyFrictions(torqueMotors, angVelo, Constants.ROT_STATIC_FRIC.getDouble(), Constants.ROT_KINE_FRIC.getDouble(), Constants.ROT_FRIC_THRESHOLD.getDouble());
+        // torqueNet = Util.applyFrictions(torqueMotors, angVelo, 0, 0, 0.1);
         return torqueNet;
     }
 

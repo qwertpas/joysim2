@@ -14,7 +14,7 @@ public class Util {
     }
 
     double velocity_direction = Math.copySign(1, velocity);
-    return force - velocity_direction * KINE_FRIC;
+    return force - (velocity_direction * KINE_FRIC);
   }
 
   public static double rpmToRadSec(double rpm) { // Rotations per minute to Radians per second

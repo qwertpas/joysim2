@@ -27,7 +27,8 @@ public class Constants{
 
     static Constant STALL_TORQUE = new Constant("STALL_TORQUE", 0.537, Type.DOUBLE); //76 oz-in for yellowjacket 3.7, converted to newton*meters
     static Constant FREE_SPEED = new Constant("FREE_SPEED", 169.6, Type.DOUBLE); //1620 rpm for yellowjacket 3.7, converted to rad/sec
-    static Constant GEAR_RATIO = new Constant("GEAR_RATIO", 4, Type.DOUBLE);
+    static Constant RINGS_GEAR_RATIO = new Constant("RINGS_GEAR_RATIO", (107/13.0) * (18/15.0), Type.DOUBLE); //GR between motor and gear rings
+    static Constant WHEEL_GEAR_RATIO = new Constant("WHEEL_GEAR_RATIO", (18/107.0), Type.DOUBLE); //GR between top/bottom gear rings and wheel
     static Constant MODULE_ROT_INERTIA = new Constant("MODULE_ROT_INERTIA", 0.0005, Type.DOUBLE); //Assume a cylinder with radius 0.1m mass 0.1kg
 
     static Constant ROBOT_MASS = new Constant("ROBOT_MASS", 10, Type.DOUBLE); //22 lbs, converted to kg
@@ -36,8 +37,8 @@ public class Constants{
     static Constant WHEEL_RADIUS = new Constant("WHEEL_RADIUS", 0.0635, Type.DOUBLE); //2.5 in, converted to m
 
     //Overall makes motors slower. Is a torque.
-    static Constant GEAR_STATIC_FRIC = new Constant("GEAR_STATIC_FRIC", 0.9, Type.DOUBLE); //actual torque against gearbox when not moving, not the coefficient 
-    static Constant GEAR_KINE_FRIC = new Constant("GEAR_KINE_FRIC", 0.5, Type.DOUBLE); //actual torque against gearbox when not moving, not the coefficient 
+    static Constant GEAR_STATIC_FRIC = new Constant("GEAR_STATIC_FRIC", 0.3, Type.DOUBLE); //actual torque against gearbox when not moving, not the coefficient 
+    static Constant GEAR_KINE_FRIC = new Constant("GEAR_KINE_FRIC", 0.3, Type.DOUBLE); //actual torque against gearbox when not moving, not the coefficient 
     static Constant GEAR_FRIC_THRESHOLD = new Constant("GEAR_FRIC_THRESHOLD", 0.001, Type.DOUBLE); //lowest motor speed in rad/sec considered as 'moving' to kine fric
 
     // Friction between wheels and ground. This stops strafing if the modules are not aligned. Is a coefficient.
@@ -46,9 +47,9 @@ public class Constants{
     static Constant WHEEL_FRIC_THRESHOLD = new Constant("WHEEL_FRIC_THRESHOLD", 0.001, Type.DOUBLE); //lowest wheel scrub m/sec considered as 'moving' to kine fric
 
     // Rotational friction that slows robot turning. Is a combo of robot length/width, drop center, friction in omnis. Is a torque.
-    static Constant ROT_STATIC_FRIC = new Constant("ROT_STATIC_FRIC", 8, Type.DOUBLE); 
-    static Constant ROT_KINE_FRIC = new Constant("ROT_KINE_FRIC", 7, Type.DOUBLE); 
-    static Constant ROT_FRIC_THRESHOLD = new Constant("ROT_FRIC_THRESHOLD", 0.001, Type.DOUBLE); //lowest robot angular velocity rad/sec considered as 'moving' to kine fric
+    static Constant ROT_STATIC_FRIC = new Constant("ROT_STATIC_FRIC", 0, Type.DOUBLE); 
+    static Constant ROT_KINE_FRIC = new Constant("ROT_KINE_FRIC", 0, Type.DOUBLE); 
+    static Constant ROT_FRIC_THRESHOLD = new Constant("ROT_FRIC_THRESHOLD", 1, Type.DOUBLE); //lowest robot angular velocity rad/sec considered as 'moving' to kine fric
 
     static Constant GRAV_ACCEL = new Constant("GRAV_ACCEL", 9.81, Type.DOUBLE);
 
@@ -57,7 +58,8 @@ public class Constants{
     static Constant DISPLAY_SCALE = new Constant("DISPLAY_SCALE", 100, Type.DOUBLE); //in pixels per meter
 
     //constants that are editable by GraphicInput
-    static Constant[] constants = {GEAR_RATIO, 
+    static Constant[] constants = {RINGS_GEAR_RATIO,
+                                   WHEEL_GEAR_RATIO,
                                    MODULE_ROT_INERTIA,
                                    ROBOT_MASS, 
                                    ROBOT_WIDTH, 

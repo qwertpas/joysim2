@@ -28,24 +28,21 @@ public class GraphicInput extends JFrame implements ActionListener {
     private void initComponents() {
         add(scrollPane);
 
+        panel.add(buttonSave);
+        panel.add(buttonPause);
+        buttonSave.addActionListener(this);
+        buttonPause.addActionListener(this);
+
         for(Constant constant : Constants.constants){
             panel.add(constant.label);
             constant.field.setMaximumSize(new Dimension(200, constant.field.getPreferredScrollableViewportSize().height));
             panel.add(constant.field);
         }
 
-        // buttonSave.setActionCommand("SAVE");
-        // buttonPause.setActionCommand("PAUSE");
-        panel.add(buttonSave);
-        panel.add(buttonPause);
-        buttonSave.addActionListener(this);
-        buttonPause.addActionListener(this);
-
         pause();
     }
     
     public void actionPerformed(ActionEvent event) {
-        System.out.println("Button pressed...");
 
         if(event.getSource() == buttonSave){
             for(Constant constant : Constants.constants){

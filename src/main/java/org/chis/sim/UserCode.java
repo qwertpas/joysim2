@@ -28,9 +28,11 @@ public class UserCode{
         double top = ringsMatrix.get(0, 0);
         double bottom = ringsMatrix.get(1, 0);
 
-        
-        Main.robot.setDrivePowers(top, bottom, top, bottom); //power ranges from -1 to 1
-        // Main.robot.setDrivePowers(forward+turn, -(forward+turn), forward-turn, -(forward-turn)); //power ranges from -1 to 1
+        //power ranges from -1 to 1
+        Main.robot.setDrivePowers(top, bottom, top, bottom); 
+        // Main.robot.setDrivePowers(1, -1, 1, -1);
+        // Main.robot.setDrivePowers(forward+turn, -(forward+turn), forward-turn, -(forward-turn));
+        // Main.robot.setDrivePowers(forward+moduleRot, -(forward+moduleRot), forward-moduleRot, -(forward-moduleRot)); //tank drive
 
         graph(); //updating the graphs
     }
@@ -49,13 +51,16 @@ public class UserCode{
     
     private static void graph(){
         w1s1.addPoint(Main.robot.linVelo);
+        // w1s1.addPoint(Main.robot.leftModule.topRingSpeed, Main.robot.leftModule.bottomRingSpeed);
+
 
         // w1s1.addPoint(Main.elaspedTime, Main.robot.leftModule.force.x);
         // w1s2.addPoint(Main.elaspedTime, Main.robot.rightModule.force.x);
         // w1s2.addPoint(Main.elaspedTime, Main.robot.leftModule.force.x);
 
-        w2s1.addPoint(Main.elaspedTime, Main.robot.angVelo);
+        // w2s1.addPoint(Main.robot.leftModule.topRingTorque, Main.robot.leftModule.bottomRingTorque);
         // w2s1.addPoint(Main.robot.forceNet.x, Main.robot.forceNet.y);
+        w2s1.addPoint(Main.elaspedTime, Main.robot.torqueNet);
 
         GraphicDebug.paintAll();
     }

@@ -100,10 +100,10 @@ public class GraphicDebug extends JPanel{
     int bottomMargin = 20;
     int topMargin = 20;
 
-    double xMin = -1;
-    double xMax = 1;
-    double yMin = -1;
-    double yMax = 1;
+    double xMin = -0.01;
+    double xMax = 0.01;
+    double yMin = -0.01;
+    double yMax = 0.01;
 
     double plotWidth, plotHeight;
     double xAxis, yAxis;
@@ -206,19 +206,21 @@ public class GraphicDebug extends JPanel{
         public void addPoint(double x, double y){
             synchronized(points){ //synchronized so usercode thread can call this while painting and avoid concurrentModificationException
                 points.add(new Point(x, y));
+                if(points.size() > maxLength){
+                    points.remove(0);
+                }
             }
-            if(points.size() > maxLength){
-                points.remove(0);
-            }
+            
         }
 
         public void addPoint(Vector2D vector2d){
             synchronized(points){ //synchronized so usercode thread can call this while painting and avoid concurrentModificationException
                 points.add(new Point(vector2d.x, vector2d.y));
+                if(points.size() > maxLength){
+                    points.remove(0);
+                }
             }
-            if(points.size() > maxLength){
-                points.remove(0);
-            }
+            
         }
 
         public class Point{ // quick alternative to java.awt.Point which can only do ints
