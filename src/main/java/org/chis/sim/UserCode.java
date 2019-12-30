@@ -21,17 +21,16 @@ public class UserCode{
         double moduleRot = Controls.rawX;
 
         SimpleMatrix wheelMatrix = new SimpleMatrix(new double[][] { { forward }, { moduleRot } });
-        SimpleMatrix diffMatrix = new SimpleMatrix(new double[][] { { 1 , -1 }, { 0.5, 0.5 } });
+        SimpleMatrix diffMatrix = new SimpleMatrix(new double[][] { { 0.5 , -0.5 }, { 0.5, 0.5 } });
 
         SimpleMatrix ringsMatrix = diffMatrix.solve(wheelMatrix);
 
         double top = ringsMatrix.get(0, 0);
         double bottom = ringsMatrix.get(1, 0);
 
-        //power ranges from -1 to 1
+        //power ranges from -1 to 1s
         Main.robot.setDrivePowers(top, bottom, top, bottom); 
         // Main.robot.setDrivePowers(1, -1, 1, -1);
-        // Main.robot.setDrivePowers(forward+turn, -(forward+turn), forward-turn, -(forward-turn));
         // Main.robot.setDrivePowers(forward+moduleRot, -(forward+moduleRot), forward-moduleRot, -(forward-moduleRot)); //tank drive
 
         graph(); //updating the graphs
@@ -47,7 +46,8 @@ public class UserCode{
     static GraphicDebug w1 = new GraphicDebug("linear velocity", new Serie[]{w1s1, w1s2}, 100);
 
     static Serie w2s1 = new Serie(Color.BLUE, 3);
-    static GraphicDebug w2 = new GraphicDebug("angular velocity", new Serie[]{w2s1}, 200);
+    static Serie w2s2 = new Serie(Color.RED, 3);
+    static GraphicDebug w2 = new GraphicDebug("angular velocity", new Serie[]{w2s1, w2s2}, 200);
     
     private static void graph(){
         w1s1.addPoint(Main.robot.linVelo);
@@ -61,6 +61,7 @@ public class UserCode{
         // w2s1.addPoint(Main.robot.leftModule.topRingTorque, Main.robot.leftModule.bottomRingTorque);
         // w2s1.addPoint(Main.robot.forceNet.x, Main.robot.forceNet.y);
         w2s1.addPoint(Main.elaspedTime, Main.robot.torqueNet);
+        w2s2.addPoint(Main.elaspedTime, Main.robot.torqueMotors);
 
         GraphicDebug.paintAll();
     }

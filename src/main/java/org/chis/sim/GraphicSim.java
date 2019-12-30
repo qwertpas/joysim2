@@ -60,10 +60,10 @@ public class GraphicSim extends JPanel implements MouseListener {
 
 		// g.drawString("torque net " + Util.roundHundreths(Main.robot.torqueNet), 500, 575);
 		g.drawString("heading " + Util.roundHundreths(Main.robot.heading), 500, 600);
-		g.drawString("L tanvelo " + Util.roundHundreths(Main.robot.leftModule.wheelTanVelo), 500, 625);
-		g.drawString("R tanvelo " + Util.roundHundreths(Main.robot.rightModule.wheelTanVelo), 500, 650);
-		g.drawString("leftDriveForce "+ Main.robot.leftModule.driveForce, 500, 675);
-		g.drawString("rigthDriveForce "+ Main.robot.rightModule.driveForce, 500, 700);
+		g.drawString("L FX " + Util.roundHundreths(Main.robot.leftModule.force.x), 500, 625);
+		g.drawString("R FX " + Util.roundHundreths(Main.robot.rightModule.force.x), 500, 650);
+		g.drawString("L FY "+ Util.roundHundreths(Main.robot.leftModule.force.y), 500, 675);
+		g.drawString("R FY "+ Util.roundHundreths(Main.robot.rightModule.force.y), 500, 700);
 		g.drawString("LT torque " + (Main.robot.leftModule.topRingTorque), 500, 725);
 		g.drawString("LB torque " + (Main.robot.leftModule.bottomRingTorque), 500, 750);
 		// g.drawString("LT motor speed " + Util.roundHundreths(Main.robot.leftModule.topMotor.angVelo), 500, 775);

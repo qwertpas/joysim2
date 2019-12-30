@@ -37,9 +37,6 @@ public class Robot{
         rightModule.update();
 
         forceNet = leftModule.force.add(rightModule.force).rotate(heading); //force on robot center of mass
-
-
-        // forceNet = new Vector2D(leftModule.force.x + rightModule.force.x, 0, Type.CARTESIAN).rotate(heading); //force on robot center of mass
         torqueNet = calcRobotTorque(leftModule.force, rightModule.force); //torque around robot center
 
         linAccel = forceNet.scalarDiv(Constants.ROBOT_MASS.getDouble()); //linear acceleration of robot center of mass
@@ -59,7 +56,7 @@ public class Robot{
 
     private double calcRobotTorque(Vector2D forceL, Vector2D forceR){
         torqueMotors = (forceR.x - forceL.x) * Constants.HALF_DIST_BETWEEN_WHEELS; //torque around center of robot
-        // torqueNet = Util.applyFrictions(torqueMotors, angVelo, Constants.ROT_STATIC_FRIC.getDouble(), Constants.ROT_KINE_FRIC.getDouble(), Constants.ROT_FRIC_THRESHOLD.getDouble());
+        torqueNet = Util.applyFrictions(torqueMotors, angVelo, Constants.ROT_STATIC_FRIC.getDouble(), Constants.ROT_KINE_FRIC.getDouble(), Constants.ROT_FRIC_THRESHOLD.getDouble());
         // torqueNet = Util.applyFrictions(torqueMotors, angVelo, 0, 0, 0.1);
         return torqueNet;
     }
