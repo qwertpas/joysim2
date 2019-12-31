@@ -42,9 +42,9 @@ public class Constants{
     static Constant GEAR_FRIC_THRESHOLD = new Constant("GEAR_FRIC_THRESHOLD", 0.001, Type.DOUBLE); //lowest motor speed in rad/sec considered as 'moving' to kine fric
 
     // Friction between wheels and ground. This stops strafing if the modules are not aligned. Is a coefficient.
-    static Constant WHEEL_STATIC_COEFF = new Constant("WHEEL_STATIC_COEFF", 0.5, Type.DOUBLE); 
-    static Constant WHEEL_KINE_COEFF = new Constant("WHEEL_KINE_COEFF", 0.4, Type.DOUBLE); 
-    static Constant WHEEL_FRIC_THRESHOLD = new Constant("WHEEL_FRIC_THRESHOLD", 1, Type.DOUBLE); //lowest wheel scrub m/sec considered as 'moving' to kine fric
+    static Constant WHEEL_STATIC_COEFF = new Constant("WHEEL_STATIC_COEFF", 1, Type.DOUBLE); 
+    static Constant WHEEL_KINE_COEFF = new Constant("WHEEL_KINE_COEFF", 0.5, Type.DOUBLE); 
+    static Constant WHEEL_FRIC_THRESHOLD = new Constant("WHEEL_FRIC_THRESHOLD", 0.01, Type.DOUBLE); //lowest wheel scrub m/sec considered as 'moving' to kine fric
 
     // Rotational friction that slows robot turning. Is a combo of robot length/width, drop center, friction in omnis. Is a torque.
     static Constant ROT_STATIC_FRIC = new Constant("ROT_STATIC_FRIC", 0.2, Type.DOUBLE); 

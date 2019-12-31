@@ -60,8 +60,8 @@ public class UserCode{
 
         // w2s1.addPoint(Main.robot.leftModule.topRingTorque, Main.robot.leftModule.bottomRingTorque);
         // w2s1.addPoint(Main.robot.forceNet.x, Main.robot.forceNet.y);
-        w2s1.addPoint(Main.elaspedTime, Main.robot.torqueNet);
-        w2s2.addPoint(Main.elaspedTime, Main.robot.torqueMotors);
+        w2s1.addPoint(Main.elaspedTime, Main.robot.leftModule.topMotor.position);
+        w2s2.addPoint(Main.elaspedTime, Main.robot.leftModule.bottomMotor.position);
 
         GraphicDebug.paintAll();
     }

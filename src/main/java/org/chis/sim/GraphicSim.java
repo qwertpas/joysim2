@@ -60,12 +60,12 @@ public class GraphicSim extends JPanel implements MouseListener {
 
 		// g.drawString("torque net " + Util.roundHundreths(Main.robot.torqueNet), 500, 575);
 		g.drawString("heading " + Util.roundHundreths(Main.robot.heading), 500, 600);
-		g.drawString("L FX " + Util.roundHundreths(Main.robot.leftModule.force.x), 500, 625);
-		g.drawString("R FX " + Util.roundHundreths(Main.robot.rightModule.force.x), 500, 650);
+		g.drawString("L Fscrub " + Util.roundHundreths(Main.robot.leftModule.scrubForce), 500, 625);
+		g.drawString("R Fscrub " + Util.roundHundreths(Main.robot.rightModule.scrubForce), 500, 650);
 		g.drawString("L FY "+ Util.roundHundreths(Main.robot.leftModule.force.y), 500, 675);
 		g.drawString("R FY "+ Util.roundHundreths(Main.robot.rightModule.force.y), 500, 700);
-		g.drawString("LT torque " + (Main.robot.leftModule.topRingTorque), 500, 725);
-		g.drawString("LB torque " + (Main.robot.leftModule.bottomRingTorque), 500, 750);
+		g.drawString("L vscrub " + (Main.robot.leftModule.wheelScrubVelo), 500, 725);
+		g.drawString("R vscrub " + (Main.robot.rightModule.wheelScrubVelo), 500, 750);
 		// g.drawString("LT motor speed " + Util.roundHundreths(Main.robot.leftModule.topMotor.angVelo), 500, 775);
 		// g.drawString("LB motor speed " + Util.roundHundreths(Main.robot.leftModule.bottomMotor.angVelo), 500, 800);
 		// g.drawString("LT motor torque " + Util.roundHundreths(Main.robot.leftModule.topMotor.torque), 700, 775);
