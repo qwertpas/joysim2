@@ -3,17 +3,17 @@ package org.chis.sim.userclasses;
 import org.chis.sim.Constants;
 import org.chis.sim.userclasses.Calculate.PIDF;
 
-class ModuleController{
+public class ModuleController{
 
-    ModuleState state;
+    public ModuleState state;
 
     PIDF anglePIDF = new PIDF(0.1, 0, 0, 0, 0, 0);
 
-    ModuleController(ModuleState initialState){
+    public ModuleController(ModuleState initialState){
         state = initialState;
     }
 
-    ModulePowers rotateModule(double targetModuleAngle){
+    public ModulePowers rotateModule(double targetModuleAngle){
         double closestModuleAngle = calcClosestModuleAngle(state.moduleAngle, targetModuleAngle);
 
         double rotPower = anglePIDF.loop(state.moduleAngle, closestModuleAngle); //TODO: replace with 2 state target: angle and linvelo
@@ -21,7 +21,7 @@ class ModuleController{
         return new ModulePowers(rotPower, rotPower);
     }
 
-    double calcClosestModuleAngle(double currentAngle, double targetAngle){
+    public double calcClosestModuleAngle(double currentAngle, double targetAngle){
         double difference180 = (currentAngle - targetAngle) % 180; //angle error from (-180, 180)
 
         double closestAngle;
@@ -37,7 +37,7 @@ class ModuleController{
         return closestAngle;
     }
 
-    void updateState(double topEncoderPos, double bottomEncoderPos, double topEncoderVelo, double bottomEncoderVelo){
+    public void updateState(double topEncoderPos, double bottomEncoderPos, double topEncoderVelo, double bottomEncoderVelo){
         state.wheelAngle = calcWheelAngle(topEncoderPos, bottomEncoderPos);
         state.moduleAngle = calcModuleAngle(topEncoderPos, bottomEncoderPos);
         state.wheelAngVelo = calcWheelAngle(topEncoderVelo, bottomEncoderVelo);
@@ -61,30 +61,38 @@ class ModuleController{
     }
 
 
-    public class ModulePowers{
-        double topPower;
-        double bottomPower;
-        ModulePowers(double topPower, double bottomPower){
+    public static class ModulePowers{
+        public double topPower;
+        public double bottomPower;
+        public ModulePowers(double topPower, double bottomPower){
             this.topPower = topPower;
             this.bottomPower = bottomPower;
         }
     }
 
-    public class ModuleState{
-        double wheelAngle;
-        double moduleAngle;
+    public static class ModuleState{
+        public double wheelAngle;
+        public double moduleAngle;
 
-        double wheelAngVelo;
-        double moduleAngVelo;
+        public double wheelAngVelo;
+        public double moduleAngVelo;
 
-        boolean reversed;
+        public boolean reversed;
 
-        ModuleState(double wheelAngle, double moduleAngle, double wheelAngVelo, double moduleAngVelo, boolean reversed){
+        public ModuleState(double wheelAngle, double moduleAngle, double wheelAngVelo, double moduleAngVelo, boolean reversed){
             this.wheelAngle = wheelAngVelo;
             this.moduleAngle = moduleAngle;
             this.wheelAngVelo = wheelAngVelo;
             this.moduleAngVelo = moduleAngVelo;
             this.reversed = reversed;
+        }
+
+        public ModuleState(){
+            this.wheelAngle = 0;
+            this.moduleAngle = 0;
+            this.wheelAngVelo = 0;
+            this.moduleAngVelo = 0;
+            this.reversed = false;
         }
 
     }
