@@ -62,10 +62,13 @@ public class GraphicSim extends JPanel implements MouseListener {
 		g.drawString("heading " + Util.roundHundreths(Main.robot.heading), 500, 600);
 		g.drawString("L angle " + Util.roundHundreths(Math.toDegrees(Main.robot.leftModule.moduleAngle)), 500, 625);
 		g.drawString("R angle " + Util.roundHundreths(Math.toDegrees(Main.robot.rightModule.moduleAngle)), 500, 650);
-		g.drawString("L reversed "+ UserCode.leftController.state.reversed, 500, 675);
-		g.drawString("R reversed "+ UserCode.rightController.state.reversed, 500, 700);
-		g.drawString("L Tangvelo "+ Util.roundHundreths(Main.robot.leftModule.topMotor.angVelo), 500, 725);
-		g.drawString("L Bangvelo "+ Util.roundHundreths(Main.robot.leftModule.bottomMotor.angVelo), 500, 750);
+		g.drawString("L reversed "+ UserCode.leftController.reversed, 500, 675);
+		g.drawString("R reversed "+ UserCode.rightController.reversed, 500, 700);
+		g.drawString("LT volt "+ Util.roundHundreths(Main.robot.leftModule.topMotor.voltage), 500, 725);
+		g.drawString("LB volt "+ Util.roundHundreths(Main.robot.leftModule.bottomMotor.voltage), 500, 750);
+		g.drawString("RT volt "+ Util.roundHundreths(Main.robot.rightModule.topMotor.voltage), 500, 775);
+		g.drawString("RB volt "+ Util.roundHundreths(Main.robot.rightModule.bottomMotor.voltage), 500, 800);
+
 
 		// g.drawString("LB motor speed " + Util.roundHundreths(Main.robot.leftModule.bottomMotor.angVelo), 500, 800);
 		// g.drawString("LT motor torque " + Util.roundHundreths(Main.robot.leftModule.topMotor.torque), 700, 775);

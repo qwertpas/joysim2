@@ -6,6 +6,13 @@
     "configurations": [
         {
             "type": "java",
+            "name": "CodeLens (Launch) - ModuleController",
+            "request": "launch",
+            "mainClass": "org.chis.sim.userclasses.ModuleController",
+            "projectName": "diffsim2"
+        },
+        {
+            "type": "java",
             "name": "CodeLens (Launch) - Util",
             "request": "launch",
             "mainClass": "org.chis.sim.Util",

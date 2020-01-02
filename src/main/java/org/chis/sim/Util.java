@@ -458,6 +458,10 @@ public class Util {
       return Math.sqrt(x*x + y*y);
     }
 
+    double getAngle(){
+      return Math.atan2(y, x);
+    }
+
     public String toString() {
       return "(" + Util.roundHundreths(x) + ", " + Util.roundHundreths(y) + ")";
     }

@@ -1,6 +1,8 @@
 package org.chis.sim;
 
 import org.chis.sim.GraphicDebug.Serie;
+import org.chis.sim.Util.Vector2D;
+import org.chis.sim.Util.Vector2D.Type;
 import org.chis.sim.userclasses.ModuleController;
 import org.chis.sim.userclasses.ModuleController.ModulePowers;
 import org.chis.sim.userclasses.ModuleController.ModuleState;
@@ -12,6 +14,10 @@ public class UserCode{
 
     static ModuleController leftController = new ModuleController(new ModuleState());
     static ModuleController rightController = new ModuleController(new ModuleState());
+
+    static ModuleState targetState;
+    static ModulePowers leftPowers;
+    static ModulePowers rightPowers;
 
     static Motor leftTopMotor;
     static Motor leftBottomMotor;
@@ -30,6 +36,8 @@ public class UserCode{
 
     public static void execute(){ //this function is run 50 times a second (every 0.02 second)
 
+        Vector2D joystick = new Vector2D(Controls.rawX, -Controls.rawY, Type.CARTESIAN);
+
         leftController.updateState(leftTopMotor.getEncoderPosition(), 
                                    leftBottomMotor.getEncoderPosition(), 
                                    leftTopMotor.getEncoderVelocity(), 
@@ -41,15 +49,30 @@ public class UserCode{
                                     rightBottomMotor.getEncoderVelocity());
 
         
-        double moduleAngle = Math.toDegrees(Math.atan2(-Controls.rawY, Controls.rawX));
+        double moduleAngle = joystick.getAngle();
+        double wheelAngVelo = joystick.getMagnitude() * 10;
+
+        targetState = new ModuleState(moduleAngle, 0, 0, wheelAngVelo);
         
-        ModulePowers leftPowers = leftController.rotateModule(moduleAngle);
-        ModulePowers rightPowers = rightController.rotateModule(moduleAngle);
+        leftPowers = leftController.move(targetState);
+        rightPowers = rightController.move(targetState);
+
+        // leftPowers = leftController.rotateModule(moduleAngle);
+        // rightPowers = rightController.rotateModule(moduleAngle);
 
         Main.robot.setDrivePowers(leftPowers.topPower,
                                   leftPowers.bottomPower, 
                                   rightPowers.topPower, 
                                   rightPowers.bottomPower);
+
+        
+
+
+        // Main.robot.setDrivePowers(
+        //     joystick.getMagnitude(),
+        //     joystick.getMagnitude(),
+        //     joystick.getMagnitude(),
+        //     joystick.getMagnitude());
 
                         
         // double forward = -Controls.rawY;
@@ -78,14 +101,18 @@ public class UserCode{
     // Motion graphs
     static Serie w1s1 = new Serie(Color.BLUE, 3);
     static Serie w1s2 = new Serie(Color.RED, 3);
-    static GraphicDebug w1 = new GraphicDebug("linear velocity", new Serie[]{w1s1, w1s2}, 100);
+    static GraphicDebug w1 = new GraphicDebug("module angle", new Serie[]{w1s1, w1s2}, 100);
 
     static Serie w2s1 = new Serie(Color.BLUE, 3);
     static Serie w2s2 = new Serie(Color.RED, 3);
-    static GraphicDebug w2 = new GraphicDebug("angular velocity", new Serie[]{w2s1, w2s2}, 200);
+    static GraphicDebug w2 = new GraphicDebug("wheel angular velocity", new Serie[]{w2s1, w2s2}, 200);
     
     private static void graph(){
-        w1s1.addPoint(Main.robot.linVelo);
+        w1s1.addPoint(Main.elaspedTime, leftController.state.moduleAngle);
+        w1s2.addPoint(Main.elaspedTime, leftController.modifiedTargetState.moduleAngle);
+
+        w2s1.addPoint(Main.elaspedTime, leftController.state.wheelAngVelo);
+        w2s2.addPoint(Main.elaspedTime, leftController.modifiedTargetState.wheelAngVelo);
         // w1s1.addPoint(Main.robot.leftModule.topRingSpeed, Main.robot.leftModule.bottomRingSpeed);
 
 
@@ -95,8 +122,8 @@ public class UserCode{
 
         // w2s1.addPoint(Main.robot.leftModule.topRingTorque, Main.robot.leftModule.bottomRingTorque);
         // w2s1.addPoint(Main.robot.forceNet.x, Main.robot.forceNet.y);
-        w2s1.addPoint(Main.elaspedTime, Main.robot.leftModule.topMotor.position);
-        w2s2.addPoint(Main.elaspedTime, Main.robot.leftModule.bottomMotor.position);
+        // w2s1.addPoint(Main.elaspedTime, Main.robot.leftModule.topMotor.position);
+        // w2s2.addPoint(Main.elaspedTime, Main.robot.leftModule.bottomMotor.position);
 
         GraphicDebug.paintAll();
     }

@@ -210,4 +210,6 @@ public class Calculate {
         return 0.5 * (a + b);
     }
 
+    
+
 }
