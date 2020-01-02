@@ -39,7 +39,6 @@ public class UserCode{
 
 
 
-
     // Motion graphs
     static Serie w1s1 = new Serie(Color.BLUE, 3);
     static Serie w1s2 = new Serie(Color.RED, 3);
