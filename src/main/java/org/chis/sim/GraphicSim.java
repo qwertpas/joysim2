@@ -60,13 +60,14 @@ public class GraphicSim extends JPanel implements MouseListener {
 
 		// g.drawString("torque net " + Util.roundHundreths(Main.robot.torqueNet), 500, 575);
 		g.drawString("heading " + Util.roundHundreths(Main.robot.heading), 500, 600);
-		g.drawString("L Fscrub " + Util.roundHundreths(Main.robot.leftModule.scrubForce), 500, 625);
-		g.drawString("R Fscrub " + Util.roundHundreths(Main.robot.rightModule.scrubForce), 500, 650);
-		g.drawString("L FY "+ Util.roundHundreths(Main.robot.leftModule.force.y), 500, 675);
-		g.drawString("R FY "+ Util.roundHundreths(Main.robot.rightModule.force.y), 500, 700);
-		g.drawString("L vscrub " + (Main.robot.leftModule.wheelScrubVelo), 500, 725);
-		g.drawString("R vscrub " + (Main.robot.rightModule.wheelScrubVelo), 500, 750);
-		// g.drawString("LT motor speed " + Util.roundHundreths(Main.robot.leftModule.topMotor.angVelo), 500, 775);
+		g.drawString("L angle " + Util.roundHundreths(Main.robot.leftModule.moduleAngle), 500, 625);
+		g.drawString("R angle " + Util.roundHundreths(Main.robot.rightModule.moduleAngle), 500, 650);
+		g.drawString("L Tdist "+ Util.roundHundreths(Main.robot.leftModule.topMotor.position), 500, 675);
+		g.drawString("L Bdist "+ Util.roundHundreths(Main.robot.leftModule.bottomMotor.position), 500, 700);
+		g.drawString("L Tangvelo "+ Util.roundHundreths(Main.robot.leftModule.topMotor.angVelo), 500, 725);
+		g.drawString("L Bangvelo "+ Util.roundHundreths(Main.robot.leftModule.bottomMotor.angVelo), 500, 750);
+
+		g.drawString("LT dt " + Main.robot.leftModule.topMotor.dt, 500, 775);
 		// g.drawString("LB motor speed " + Util.roundHundreths(Main.robot.leftModule.bottomMotor.angVelo), 500, 800);
 		// g.drawString("LT motor torque " + Util.roundHundreths(Main.robot.leftModule.topMotor.torque), 700, 775);
 		// g.drawString("LB motor torque " + Util.roundHundreths(Main.robot.leftModule.bottomMotor.torque), 700, 800);

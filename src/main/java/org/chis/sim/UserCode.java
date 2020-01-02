@@ -5,11 +5,7 @@ import org.ejml.simple.SimpleMatrix;
 
 import java.awt.Color;
 
-
 public class UserCode{
-
-    static double lPower;
-    static double rPower;
 
     public static void initialize(){ //this function is run once when the robot starts
         GraphicDebug.turnOnAll(); //displaying the graphs
@@ -17,7 +13,8 @@ public class UserCode{
 
     public static void execute(){ //this function is run 50 times a second (every 0.02 second)
 
-        double forward = -Controls.rawY;
+        // double forward = -Controls.rawY;
+        double forward = 0;
         double moduleRot = Controls.rawX;
 
         SimpleMatrix wheelMatrix = new SimpleMatrix(new double[][] { { forward }, { moduleRot } });

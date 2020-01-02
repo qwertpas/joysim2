@@ -19,12 +19,24 @@ class Motor{
         lastTime = System.nanoTime();
         angVelo = radPerSec_input;
 
-        position += angVelo;
+        position = position + angVelo * dt;
     }
 
     double getTorque(){ //input is radians per second
         torque = Constants.STALL_TORQUE.getDouble() * ((voltage/12.0) - (angVelo / Constants.FREE_SPEED.getDouble()));
         return torque;
+    }
+
+    double getEncoderPosition(){
+        double revolutions = position / (2 * Math.PI); //convert the position in radians to position in revolutions
+        double encoderTicks = revolutions * Constants.TICKS_PER_REV.getDouble(); //convert revolutions to encoder ticks
+        return encoderTicks;
+    }
+
+    double getEncoderVelocity(){
+        double rpm = angVelo / (2 * Math.PI);
+        double encoderTicksPerSec = rpm * Constants.TICKS_PER_REV.getDouble();
+        return encoderTicksPerSec;
     }
 
     public static void main(String[] args) {

@@ -1,5 +1,6 @@
 package org.chis.sim.userclasses;
 
+import org.chis.sim.Constants;
 import org.chis.sim.userclasses.Calculate.PIDF;
 
 class ModuleController{
@@ -12,15 +13,15 @@ class ModuleController{
         state = initialState;
     }
 
-    ModulePowers rotate(double targetAngle){
-        double closestAngle = calcClosestAngle(targetAngle, state.angVelo);
+    ModulePowers rotateModule(double targetModuleAngle){
+        double closestModuleAngle = calcClosestModuleAngle(state.moduleAngle, targetModuleAngle);
 
-        double rotPower = anglePIDF.loop(state.angle, closestAngle); //TODO: replace with 2 state target: angle and linvelo
+        double rotPower = anglePIDF.loop(state.moduleAngle, closestModuleAngle); //TODO: replace with 2 state target: angle and linvelo
 
         return new ModulePowers(rotPower, rotPower);
     }
 
-    double calcClosestAngle(double targetAngle, double currentAngle){
+    double calcClosestModuleAngle(double currentAngle, double targetAngle){
         double difference180 = (currentAngle - targetAngle) % 180; //angle error from (-180, 180)
 
         double closestAngle;
@@ -36,16 +37,29 @@ class ModuleController{
         return closestAngle;
     }
 
-    void updateState(double topEncoderValue, double bottomEncoderValue){
-        state.angle = determineAngle(topEncoderValue, bottomEncoderValue);
+    void updateState(double topEncoderPos, double bottomEncoderPos, double topEncoderVelo, double bottomEncoderVelo){
+        state.wheelAngle = calcWheelAngle(topEncoderPos, bottomEncoderPos);
+        state.moduleAngle = calcModuleAngle(topEncoderPos, bottomEncoderPos);
+        state.wheelAngVelo = calcWheelAngle(topEncoderVelo, bottomEncoderVelo);
+        state.moduleAngVelo = calcModuleAngle(topEncoderVelo, bottomEncoderVelo);
     }
 
-    private double determineAngle(double motorTop, double motorBottom){
-        double gearRatio = 1024.0;
-        double avgMotor = ((motorTop + motorBottom)/2.0);
-        double angleValue = (avgMotor/gearRatio) * 360.0;
-        return angleValue;
+
+    private double calcWheelAngle(double motorTop, double motorBottom){
+        double avgMotorTicks = (motorTop - motorBottom) / 2.0; //wheel rotation is difference in motors / 2
+        double avgMotorRevs = avgMotorTicks / Constants.TICKS_PER_REV.getDouble(); //convert encoder ticks to revolutions
+        double moduleAngleRevs = avgMotorRevs / Constants.RINGS_GEAR_RATIO.getDouble(); //module angle, in revolutions
+        double moduleAngleDeg = moduleAngleRevs * 360; //convert revolutions to degrees
+        return moduleAngleDeg;
     }
+    private double calcModuleAngle(double motorTop, double motorBottom){
+        double avgMotorTicks = (motorTop + motorBottom) / 2.0; //module rotation is the average of the motors
+        double avgMotorRevs = avgMotorTicks / Constants.TICKS_PER_REV.getDouble(); //convert encoder ticks to revolutions
+        double moduleAngleRevs = avgMotorRevs / Constants.RINGS_GEAR_RATIO.getDouble(); //module angle, in revolutions
+        double moduleAngleDeg = moduleAngleRevs * 360; //convert revolutions to degrees
+        return moduleAngleDeg;
+    }
+
 
     public class ModulePowers{
         double topPower;
@@ -57,15 +71,21 @@ class ModuleController{
     }
 
     public class ModuleState{
-        double linVelo;
-        double angVelo;
-        double angle;
+        double wheelAngle;
+        double moduleAngle;
+
+        double wheelAngVelo;
+        double moduleAngVelo;
+
         boolean reversed;
-        ModuleState(double linVelo, double angVelo, double angle, boolean reversed){
-            this.linVelo = linVelo;
-            this.angVelo = angVelo;
-            this.angle = angle;
+
+        ModuleState(double wheelAngle, double moduleAngle, double wheelAngVelo, double moduleAngVelo, boolean reversed){
+            this.wheelAngle = wheelAngVelo;
+            this.moduleAngle = moduleAngle;
+            this.wheelAngVelo = wheelAngVelo;
+            this.moduleAngVelo = moduleAngVelo;
             this.reversed = reversed;
         }
+
     }
 }

@@ -66,7 +66,7 @@ class DiffModule {
         lastTime = System.nanoTime();
 
         double moduleTorque = topMotor.torque + bottomMotor.torque;
-        moduleTorque = Util.applyFrictions(moduleTorque, moduleAngVelo, 0.1, 0.1, 0.001);
+        moduleTorque = Util.applyFrictions(moduleTorque, moduleAngVelo, 0.1, 0.1, 0.0001);
         // moduleTorque = Util.applyFrictions(moduleTorque, moduleAngVelo, 0, 0, 0.001);
         double moduleAngAccel = moduleTorque / Constants.MODULE_ROT_INERTIA.getDouble();
         moduleAngVelo = moduleAngAccel * dt + moduleAngVelo; // integration
