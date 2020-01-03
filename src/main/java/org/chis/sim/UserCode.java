@@ -18,6 +18,8 @@ public class UserCode{
     static Motor rightTopMotor;
     static Motor rightBottomMotor;
 
+    static Vector2D targetPos = new Vector2D();
+
     public static void initialize(){ //this function is run once when the robot starts
         GraphicDebug.turnOnAll(); //displaying the graphs
 
@@ -32,7 +34,9 @@ public class UserCode{
 
         Vector2D joystick = new Vector2D(Controls.rawX, -Controls.rawY, Type.CARTESIAN);
 
-        controller.updateModuleStates(
+        controller.updateState(
+            Main.robot.position,
+            Main.robot.heading,
             leftTopMotor.getEncoderPosition(), 
             leftBottomMotor.getEncoderPosition(), 
             leftTopMotor.getEncoderVelocity(), 
@@ -43,9 +47,14 @@ public class UserCode{
             rightBottomMotor.getEncoderVelocity()
         );
 
+        targetPos = targetPos.add(joystick.scalarMult(0.01));
+
+        System.out.println(targetPos.x);
+
+
         joystick = joystick.scalarMult(8);
         
-        targetRobotState = new RobotState(new Vector2D(joystick.y, 0, Type.CARTESIAN), -joystick.x);
+        targetRobotState = new RobotState(new Vector2D(targetPos.x, targetPos.y, Type.CARTESIAN), -Controls.slider);
 
         controller.move(targetRobotState);
 
@@ -100,18 +109,18 @@ public class UserCode{
     // Motion graphs
     static Serie w1s1 = new Serie(Color.BLUE, 3);
     static Serie w1s2 = new Serie(Color.RED, 3);
-    static GraphicDebug w1 = new GraphicDebug("module angle", new Serie[]{w1s1, w1s2}, 100);
+    static GraphicDebug w1 = new GraphicDebug("robot position", new Serie[]{w1s1, w1s2}, 100);
 
     static Serie w2s1 = new Serie(Color.BLUE, 3);
     static Serie w2s2 = new Serie(Color.RED, 3);
-    static GraphicDebug w2 = new GraphicDebug("wheel angular velocity", new Serie[]{w2s1, w2s2}, 200);
+    static GraphicDebug w2 = new GraphicDebug("robot heading", new Serie[]{w2s1, w2s2}, 200);
     
     private static void graph(){
-        w1s1.addPoint(controller.robotState.linVelo.x, controller.robotState.linVelo.y);
-        w1s2.addPoint(targetRobotState.linVelo.x, targetRobotState.linVelo.y);
+        w1s1.addPoint(controller.robotState.position.x, controller.robotState.position.y);
+        w1s2.addPoint(targetPos.x, targetPos.y);
 
-        w2s1.addPoint(Main.elaspedTime, controller.leftController.state.wheelAngVelo);
-        w2s2.addPoint(Main.elaspedTime, controller.leftController.modifiedTargetState.wheelAngVelo);
+        w2s1.addPoint(Main.elaspedTime, controller.robotState.heading);
+        w2s2.addPoint(Main.elaspedTime, targetRobotState.heading);
         // w1s1.addPoint(Main.robot.leftModule.topRingSpeed, Main.robot.leftModule.bottomRingSpeed);
 
 
