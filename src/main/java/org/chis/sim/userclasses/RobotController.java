@@ -1,5 +1,6 @@
 package org.chis.sim.userclasses;
 
+import org.chis.sim.Constants;
 import org.chis.sim.Util.Vector2D;
 import org.chis.sim.Util.Vector2D.Type;
 import org.chis.sim.userclasses.ModuleController.ModuleState;
@@ -15,34 +16,24 @@ public class RobotController {
     public ModuleState leftTargetModuleState;
     public ModuleState rightTargetModuleState;
 
-    public SimpleMatrix K = new SimpleMatrix(new double[][]{
-
-        {  5, 2.18752e-15, -22.3607 },
-     {  -1.0873e-15, 5, 8.4838e-15 },
-     {  5, -1.22604e-15, 22.3607 },
-     {  -1.936e-15, 5, 1.0406e-14 }
-
-    });
-    public SimpleMatrix u;
-
-
-    public RobotStateController(RobotState robotState){
+    public RobotController(RobotState robotState){
         this.robotState = robotState;
     }
 
     public void move(RobotState targetRobotState){
+        RobotState modifiedTargetState = targetRobotState.copy();
+        modifiedTargetState.heading = calcClosestHeading(robotState.heading, targetRobotState.heading);
 
-        u = robotState.getState().minus(targetRobotState.getState());
-        SimpleMatrix negKu = K.mult(u).negative();
+        double angVelo = 20*(modifiedTargetState.heading - robotState.heading);
         
         Vector2D targetLeftVelo = new Vector2D(
-            negKu.get(0), 
-            negKu.get(1), 
+            modifiedTargetState.linVelo.x - angVelo * Constants.HALF_DIST_BETWEEN_WHEELS, 
+            modifiedTargetState.linVelo.y, 
             Type.CARTESIAN);
 
         Vector2D targetRightVelo = new Vector2D(
-            negKu.get(2), 
-            negKu.get(3), 
+            modifiedTargetState.linVelo.x + angVelo * Constants.HALF_DIST_BETWEEN_WHEELS, 
+            modifiedTargetState.linVelo.y, 
             Type.CARTESIAN);
 
         leftTargetModuleState = new ModuleState(targetLeftVelo.getAngle(), 0, 0, targetLeftVelo.getMagnitude());
@@ -52,8 +43,23 @@ public class RobotController {
         rightController.move(rightTargetModuleState);
     }
 
+    public double calcClosestHeading(double currentHeading, double targetHeading){
+        double difference2Pi = (currentHeading - targetHeading) % (2 * Math.PI); //angle error from (-180, 180)
+        double closestHeading;
+        if(Math.abs(difference2Pi) < (Math.PI)){ //chooses closer of the two acceptable angles closest to currentAngle
+            closestHeading = currentHeading - difference2Pi;
+        }else{
+            closestHeading = currentHeading - difference2Pi + Math.copySign(2 * Math.PI, difference2Pi);
+        }
+        return closestHeading;
+    }
+
+    public static void main(String[] args) {
+        var cont = new RobotController(new RobotState());
+        System.out.println(cont.calcClosestHeading(Math.PI+.1, 0));
+    }
+
     public void updateState(
-        Vector2D robotPosition,
         double robotHeading,     
         double leftTopEncoderPosition,
         double leftBottomEncoderPosition,
@@ -64,7 +70,6 @@ public class RobotController {
         double rightTopEncoderVelocity,
         double rightBottomEncoderVelocity
     ){
-        robotState.position = robotPosition;
         robotState.heading = robotHeading;
         leftController.updateState(
             leftTopEncoderPosition, 
@@ -81,22 +86,18 @@ public class RobotController {
 
 
     public static class RobotState{
-        public Vector2D position;
+        public Vector2D linVelo;
         public double heading;
-        public RobotState(Vector2D position, double heading){
-            this.position = position;
+        public RobotState(Vector2D linVelo, double heading){
+            this.linVelo = linVelo;
             this.heading = heading;
         }
         public RobotState(){
-            this.position = new Vector2D();
+            this.linVelo = new Vector2D();
             this.heading = 0;
         }
-        public SimpleMatrix getState(){
-            return new SimpleMatrix(new double[][]{
-                {position.x},
-                {position.y},
-                {heading}
-            });
+        public RobotState copy(){
+            return new RobotState(linVelo, heading);
         }
     }
 

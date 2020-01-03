@@ -19,8 +19,6 @@ public class UserCode{
     static Motor rightTopMotor;
     static Motor rightBottomMotor;
 
-    static Vector2D targetPos = new Vector2D();
-
     public static void initialize(){ //this function is run once when the robot starts
         GraphicDebug.turnOnAll(); //displaying the graphs
 
@@ -36,11 +34,6 @@ public class UserCode{
         Vector2D joystick = new Vector2D(Controls.rawX, -Controls.rawY, Type.CARTESIAN);
 
         controller.updateState(
-            new Vector2D(
-                controller.leftController.odometer.x,
-                controller.leftController.odometer.y,
-                Type.CARTESIAN
-            ),
             Main.robot.heading,
             leftTopMotor.getEncoderPosition(), 
             leftBottomMotor.getEncoderPosition(), 
@@ -52,12 +45,10 @@ public class UserCode{
             rightBottomMotor.getEncoderVelocity()
         );
 
-        targetPos = targetPos.add(joystick.scalarMult(0.01));
 
-
-        joystick = joystick.scalarMult(8);
+        joystick = joystick.scalarMult(8).rotate(-Main.robot.heading);
         
-        targetRobotState = new RobotState(new Vector2D(targetPos.x, targetPos.y, Type.CARTESIAN), -Controls.slider);
+        targetRobotState = new RobotState(new Vector2D(joystick.x, joystick.y, Type.CARTESIAN), -Controls.slider * Math.PI);
 
         controller.move(targetRobotState);
 
@@ -66,7 +57,7 @@ public class UserCode{
             controller.leftController.modulePowers.bottomPower,
             controller.rightController.modulePowers.topPower,
             controller.rightController.modulePowers.bottomPower,
-            0.1
+            0.0
         );
 
 
@@ -119,8 +110,8 @@ public class UserCode{
     static GraphicDebug w2 = new GraphicDebug("robot heading", new Serie[]{w2s1, w2s2}, 200);
     
     private static void graph(){
-        w1s1.addPoint(controller.robotState.position.x, controller.robotState.position.y);
-        w1s2.addPoint(targetPos.x, targetPos.y);
+        w1s1.addPoint(Main.elaspedTime, Main.robot.leftModule.topMotor.voltage);
+        w1s2.addPoint(Main.elaspedTime, Main.robot.leftModule.bottomMotor.voltage);
 
         w2s1.addPoint(Main.elaspedTime, controller.robotState.heading);
         w2s2.addPoint(Main.elaspedTime, targetRobotState.heading);

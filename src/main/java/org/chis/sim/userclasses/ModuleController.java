@@ -18,11 +18,12 @@ public class ModuleController{
 
     SimpleMatrix u;
 
-    private PIDF anglePIDF = new PIDF(0.5, 0, 0, 0.1, 0, 0);
+    private PIDF anglePIDF = new PIDF(1, 0, 0, 0.1, 0, 0);
+    private PIDF forwardPIDF = new PIDF(0.1, 0, 0, 0.1, 0, 0);
 
     private SimpleMatrix K = new SimpleMatrix(new double[][] { //from matlab calcs
-        { 22.36,    0.0179,    0,    11.06},
-        { 22.36,    0.0179,    0,    -11.06}
+        { 22.36,    0,    0,    8.06},
+        { 22.36,    0,    0,    -8.06}
     });
 
     public ModuleController(ModuleState initialState){
@@ -30,6 +31,23 @@ public class ModuleController{
     }
 
     public ModulePowers move(ModuleState targetState){
+        modifiedTargetState = targetState.copy(); //modify to find optimal angle with same results
+        modifiedTargetState.moduleAngle = calcClosestModuleAngle(state.moduleAngle, targetState.moduleAngle);
+        if(reversed) modifiedTargetState.wheelAngVelo = -targetState.wheelAngVelo;
+        
+        double rotPower = anglePIDF.loop(state.moduleAngle, modifiedTargetState.moduleAngle);
+        if(anglePIDF.inTolerance) rotPower = 0;
+        double forwardPower = forwardPIDF.loop(state.wheelAngVelo, modifiedTargetState.wheelAngVelo);
+
+        double maxPower = Math.abs(rotPower) + Math.abs(forwardPower);
+
+        double topPower = (rotPower + forwardPower) / maxPower;
+        double bottomPower = (rotPower - forwardPower) / maxPower;
+        modulePowers = new ModulePowers(topPower, bottomPower);
+        return modulePowers;
+    }
+
+    public ModulePowers moveStateSpace(ModuleState targetState){
         modifiedTargetState = targetState.copy(); //modify to find optimal angle with same results
         modifiedTargetState.moduleAngle = calcClosestModuleAngle(state.moduleAngle, targetState.moduleAngle);
         if(reversed) modifiedTargetState.wheelAngVelo = -targetState.wheelAngVelo;
@@ -41,11 +59,10 @@ public class ModuleController{
         return modulePowers;
     }
 
-    public ModulePowers rotateModule(double targetModuleAngle){
+    public double rotateModule(double targetModuleAngle){
         double closestModuleAngle = calcClosestModuleAngle(state.moduleAngle, targetModuleAngle);
         double rotPower = anglePIDF.loop(state.moduleAngle, closestModuleAngle);
-        modulePowers = new ModulePowers(rotPower, rotPower);
-        return modulePowers;
+        return rotPower;
     }
 
     public double calcClosestModuleAngle(double currentAngle, double targetAngle){
