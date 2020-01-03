@@ -3,21 +3,15 @@ package org.chis.sim;
 import org.chis.sim.GraphicDebug.Serie;
 import org.chis.sim.Util.Vector2D;
 import org.chis.sim.Util.Vector2D.Type;
-import org.chis.sim.userclasses.ModuleController;
-import org.chis.sim.userclasses.ModuleController.ModulePowers;
-import org.chis.sim.userclasses.ModuleController.ModuleState;
-import org.ejml.simple.SimpleMatrix;
+import org.chis.sim.userclasses.RobotController;
+import org.chis.sim.userclasses.RobotController.RobotState;
 
 import java.awt.Color;
 
 public class UserCode{
 
-    static ModuleController leftController = new ModuleController(new ModuleState());
-    static ModuleController rightController = new ModuleController(new ModuleState());
-
-    static ModuleState targetState;
-    static ModulePowers leftPowers;
-    static ModulePowers rightPowers;
+    static RobotController controller = new RobotController(new RobotState());
+    static RobotState targetRobotState;
 
     static Motor leftTopMotor;
     static Motor leftBottomMotor;
@@ -38,34 +32,30 @@ public class UserCode{
 
         Vector2D joystick = new Vector2D(Controls.rawX, -Controls.rawY, Type.CARTESIAN);
 
-        leftController.updateState(leftTopMotor.getEncoderPosition(), 
-                                   leftBottomMotor.getEncoderPosition(), 
-                                   leftTopMotor.getEncoderVelocity(), 
-                                   leftBottomMotor.getEncoderVelocity());
+        controller.updateModuleStates(
+            leftTopMotor.getEncoderPosition(), 
+            leftBottomMotor.getEncoderPosition(), 
+            leftTopMotor.getEncoderVelocity(), 
+            leftBottomMotor.getEncoderVelocity(),
+            rightTopMotor.getEncoderPosition(),
+            rightBottomMotor.getEncoderPosition(), 
+            rightTopMotor.getEncoderVelocity(),
+            rightBottomMotor.getEncoderVelocity()
+        );
 
-        rightController.updateState(rightTopMotor.getEncoderPosition(),
-                                    rightBottomMotor.getEncoderPosition(), 
-                                    rightTopMotor.getEncoderVelocity(),
-                                    rightBottomMotor.getEncoderVelocity());
-
+        joystick = joystick.scalarMult(8);
         
-        double moduleAngle = joystick.getAngle();
-        double wheelAngVelo = joystick.getMagnitude() * 10;
+        targetRobotState = new RobotState(new Vector2D(joystick.y, 0, Type.CARTESIAN), -joystick.x);
 
-        targetState = new ModuleState(moduleAngle, 0, 0, wheelAngVelo);
-        
-        leftPowers = leftController.move(targetState);
-        rightPowers = rightController.move(targetState);
+        controller.move(targetRobotState);
 
-        // leftPowers = leftController.rotateModule(moduleAngle);
-        // rightPowers = rightController.rotateModule(moduleAngle);
-
-        Main.robot.setDrivePowers(leftPowers.topPower,
-                                  leftPowers.bottomPower, 
-                                  rightPowers.topPower, 
-                                  rightPowers.bottomPower);
-
-        
+        setDrivePowersAndFeed(
+            controller.leftController.modulePowers.topPower,
+            controller.leftController.modulePowers.bottomPower,
+            controller.rightController.modulePowers.topPower,
+            controller.rightController.modulePowers.bottomPower,
+            0.1
+        );
 
 
         // Main.robot.setDrivePowers(
@@ -95,6 +85,15 @@ public class UserCode{
         graph(); //updating the graphs
     }
 
+    private static void setDrivePowersAndFeed(double LT, double LB, double RT, double RB, double feedforward){
+        Main.robot.setDrivePowers(
+            LT + Math.copySign(feedforward, LT),
+            LB + Math.copySign(feedforward, LB), 
+            RT + Math.copySign(feedforward, RT), 
+            RB + Math.copySign(feedforward, RB)
+        );
+    }
+
 
 
 
@@ -108,11 +107,11 @@ public class UserCode{
     static GraphicDebug w2 = new GraphicDebug("wheel angular velocity", new Serie[]{w2s1, w2s2}, 200);
     
     private static void graph(){
-        w1s1.addPoint(Main.elaspedTime, leftController.state.moduleAngle);
-        w1s2.addPoint(Main.elaspedTime, leftController.modifiedTargetState.moduleAngle);
+        w1s1.addPoint(controller.robotState.linVelo.x, controller.robotState.linVelo.y);
+        w1s2.addPoint(targetRobotState.linVelo.x, targetRobotState.linVelo.y);
 
-        w2s1.addPoint(Main.elaspedTime, leftController.state.wheelAngVelo);
-        w2s2.addPoint(Main.elaspedTime, leftController.modifiedTargetState.wheelAngVelo);
+        w2s1.addPoint(Main.elaspedTime, controller.leftController.state.wheelAngVelo);
+        w2s2.addPoint(Main.elaspedTime, controller.leftController.modifiedTargetState.wheelAngVelo);
         // w1s1.addPoint(Main.robot.leftModule.topRingSpeed, Main.robot.leftModule.bottomRingSpeed);
 
 

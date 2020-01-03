@@ -10,11 +10,15 @@ public class ModuleController{
     public ModuleState modifiedTargetState;
     public boolean reversed;
 
+    public ModulePowers modulePowers;
+
+    SimpleMatrix u;
+
     private PIDF anglePIDF = new PIDF(0.5, 0, 0, 0.1, 0, 0);
 
-    private SimpleMatrix K = new SimpleMatrix(new double[][] {
-        { 7.0711,    0,    0,    2.1},
-        { 7.0711,    0,    0,    -2.1}
+    private SimpleMatrix K = new SimpleMatrix(new double[][] { //from matlab calcs
+        { 22.36,    0.0179,    0,    11.06},
+        { 22.36,    0.0179,    0,    -11.06}
     });
 
     public ModuleController(ModuleState initialState){
@@ -25,24 +29,19 @@ public class ModuleController{
         modifiedTargetState = targetState.copy(); //modify to find optimal angle with same results
         modifiedTargetState.moduleAngle = calcClosestModuleAngle(state.moduleAngle, targetState.moduleAngle);
         if(reversed) modifiedTargetState.wheelAngVelo = -targetState.wheelAngVelo;
-
-        SimpleMatrix negKu = K.mult(state.getState().minus(modifiedTargetState.getState())).negative();
+        u = state.getState().minus(modifiedTargetState.getState());
+        SimpleMatrix negKu = K.mult(u).negative();
         double topVoltage = negKu.get(0, 0);
         double bottomVoltage = negKu.get(1, 0);
-        return new ModulePowers(topVoltage/12.0, bottomVoltage/12.0);
-    }
-
-    public static void main(String[] args) {
-        var mc = new ModuleController(new ModuleState(0, 0, 0, 0));
-        System.out.println(mc.calcClosestModuleAngle(1.58, Math.PI));
+        modulePowers = new ModulePowers(topVoltage/12.0, bottomVoltage/12.0);
+        return modulePowers;
     }
 
     public ModulePowers rotateModule(double targetModuleAngle){
         double closestModuleAngle = calcClosestModuleAngle(state.moduleAngle, targetModuleAngle);
-
         double rotPower = anglePIDF.loop(state.moduleAngle, closestModuleAngle);
-
-        return new ModulePowers(rotPower, rotPower);
+        modulePowers = new ModulePowers(rotPower, rotPower);
+        return modulePowers;
     }
 
     public double calcClosestModuleAngle(double currentAngle, double targetAngle){

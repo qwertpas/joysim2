@@ -59,6 +59,7 @@ public class Robot{
         torqueNet = Util.applyFrictions(torqueMotors, angVelo, Constants.ROT_STATIC_FRIC.getDouble(), Constants.ROT_KINE_FRIC.getDouble(), Constants.ROT_FRIC_THRESHOLD.getDouble());
         // torqueNet = Util.applyFrictions(torqueMotors, angVelo, 0, 0, 0.1);
         return torqueNet;
+        // return 0;
     }
 
     public void setDrivePowers(double lt, double lb, double rt, double rb){
