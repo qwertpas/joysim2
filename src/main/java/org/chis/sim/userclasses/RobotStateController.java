@@ -5,7 +5,7 @@ import org.chis.sim.Util.Vector2D.Type;
 import org.chis.sim.userclasses.ModuleController.ModuleState;
 import org.ejml.simple.SimpleMatrix;
 
-public class RobotController {
+public class RobotStateController {
 
     public RobotState robotState;
 

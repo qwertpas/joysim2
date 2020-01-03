@@ -5,6 +5,7 @@ import org.chis.sim.Util.Vector2D;
 import org.chis.sim.Util.Vector2D.Type;
 import org.chis.sim.userclasses.RobotController;
 import org.chis.sim.userclasses.RobotController.RobotState;
+import org.ejml.simple.SimpleMatrix;
 
 import java.awt.Color;
 
@@ -35,7 +36,11 @@ public class UserCode{
         Vector2D joystick = new Vector2D(Controls.rawX, -Controls.rawY, Type.CARTESIAN);
 
         controller.updateState(
-            Main.robot.position,
+            new Vector2D(
+                controller.leftController.odometer.x,
+                controller.leftController.odometer.y,
+                Type.CARTESIAN
+            ),
             Main.robot.heading,
             leftTopMotor.getEncoderPosition(), 
             leftBottomMotor.getEncoderPosition(), 
@@ -48,8 +53,6 @@ public class UserCode{
         );
 
         targetPos = targetPos.add(joystick.scalarMult(0.01));
-
-        System.out.println(targetPos.x);
 
 
         joystick = joystick.scalarMult(8);
@@ -86,7 +89,7 @@ public class UserCode{
         // double top = ringsMatrix.get(0, 0);
         // double bottom = ringsMatrix.get(1, 0);
 
-        //power ranges from -1 to 1s
+        // power ranges from -1 to 1s
         // Main.robot.setDrivePowers(top, bottom, top, bottom); 
         // Main.robot.setDrivePowers(1, -1, 1, -1);
         // Main.robot.setDrivePowers(forward+moduleRot, -(forward+moduleRot), forward-moduleRot, -(forward-moduleRot)); //tank drive

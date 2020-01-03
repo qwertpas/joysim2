@@ -1,6 +1,8 @@
 package org.chis.sim.userclasses;
 
 import org.chis.sim.Constants;
+import org.chis.sim.Util.Vector2D;
+import org.chis.sim.Util.Vector2D.Type;
 import org.chis.sim.userclasses.Calculate.PIDF;
 import org.ejml.simple.SimpleMatrix;
 
@@ -11,6 +13,8 @@ public class ModuleController{
     public boolean reversed;
 
     public ModulePowers modulePowers;
+
+    public Vector2D odometer = new Vector2D();
 
     SimpleMatrix u;
 
@@ -60,11 +64,17 @@ public class ModuleController{
         return closestAngle;
     }
 
+    double lastTime = System.nanoTime();
     public void updateState(double topEncoderPos, double bottomEncoderPos, double topEncoderVelo, double bottomEncoderVelo){
         state.moduleAngle = calcModuleAngle(topEncoderPos, bottomEncoderPos);
         state.moduleAngVelo = calcModuleAngle(topEncoderVelo, bottomEncoderVelo);
         state.wheelAngVelo = calcWheelAngle(topEncoderVelo, bottomEncoderVelo);
         state.wheelAngle = calcWheelAngle(topEncoderPos, bottomEncoderPos);
+
+        double dt = (System.nanoTime() - lastTime) * 1e-9;
+        lastTime = System.nanoTime();
+        Vector2D ds = new Vector2D(state.wheelAngVelo * Constants.WHEEL_RADIUS.getDouble(), state.moduleAngle, Type.POLAR).scalarMult(dt);
+        odometer = odometer.add(ds);
     }
 
 
