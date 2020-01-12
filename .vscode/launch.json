@@ -4,81 +4,14 @@
     // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
     "configurations": [
+
         {
             "type": "java",
-            "name": "CodeLens (Launch) - RobotController",
-            "request": "launch",
-            "mainClass": "org.chis.sim.userclasses.RobotController",
-            "projectName": "diffsim2"
-        },
-        {
-            "type": "java",
-            "name": "CodeLens (Launch) - ModuleController",
-            "request": "launch",
-            "mainClass": "org.chis.sim.userclasses.ModuleController",
-            "projectName": "diffsim2"
-        },
-        {
-            "type": "java",
-            "name": "CodeLens (Launch) - Util",
-            "request": "launch",
-            "mainClass": "org.chis.sim.Util",
-            "projectName": "diffsim2"
-        },
-        {
-            "type": "java",
-            "name": "CodeLens (Launch) - Util$Vector2D",
-            "request": "launch",
-            "mainClass": "org.chis.sim.Util$Vector2D",
-            "projectName": "diffsim2"
-        },
-        {
-            "type": "java",
-            "name": "Debug (Launch) - Current File",
-            "request": "launch",
-            "mainClass": "${file}"
-        },
-        {
-            "type": "java",
-            "name": "Debug (Launch)-App<diffsim2>",
-            "request": "launch",
-            "mainClass": "org.chis.sim.App",
-            "projectName": "diffsim2"
-        },
-        {
-            "type": "java",
-            "name": "Debug (Launch)-Controls<diffsim2>",
-            "request": "launch",
-            "mainClass": "org.chis.sim.Controls",
-            "projectName": "diffsim2"
-        },
-        {
-            "type": "java",
-            "name": "Debug (Launch)-GraphicInput<diffsim2>",
-            "request": "launch",
-            "mainClass": "org.chis.sim.GraphicInput",
-            "projectName": "diffsim2"
-        },
-        {
-            "type": "java",
-            "name": "Debug (Launch)-Main<diffsim2>",
+            "name": "CodeLens (Launch) - Main",
             "request": "launch",
             "mainClass": "org.chis.sim.Main",
-            "projectName": "diffsim2"
+            "projectName": "joysim2"
         },
-        {
-            "type": "java",
-            "name": "Debug (Launch)-Motor<diffsim2>",
-            "request": "launch",
-            "mainClass": "org.chis.sim.Motor",
-            "projectName": "diffsim2"
-        },
-        {
-            "type": "java",
-            "name": "Debug (Launch)-Util$MotionProfile<diffsim2>",
-            "request": "launch",
-            "mainClass": "org.chis.sim.Util$MotionProfile",
-            "projectName": "diffsim2"
-        }
+        
     ]
 }

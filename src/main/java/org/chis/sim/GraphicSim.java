@@ -3,7 +3,7 @@ package org.chis.sim;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.image.ImageObserver;
+import java.awt.Image;
 import java.awt.Point;
 import java.awt.RenderingHints;
 import java.awt.Toolkit;
@@ -19,6 +19,8 @@ import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
+import org.chis.sim.userclasses.UserCode;
+
 public class GraphicSim extends JPanel implements MouseListener {
 	private static final long serialVersionUID = -87884863222799400L;
 
@@ -27,10 +29,10 @@ public class GraphicSim extends JPanel implements MouseListener {
 	AffineTransform defaultTransform = new AffineTransform(); //to reset the g2d position and rotation
 
 	static File robotFile;
-	static File moduleFile;
+	static File targetFile;
 
-	static BufferedImage robotImage;
-	static BufferedImage moduleImage;
+	static Image robotImage;
+	static Image targetImage;
 
 	static int screenHeight;
 	static int screenWidth;
@@ -39,7 +41,6 @@ public class GraphicSim extends JPanel implements MouseListener {
 	static int robotImgHeight;
 	static int robotDisplayWidth;
 	static double robotScale;
-	static int moduleDisplayWidth;
 
 	static ArrayList<Point> points = new ArrayList<Point>();
 
@@ -55,25 +56,15 @@ public class GraphicSim extends JPanel implements MouseListener {
 		Graphics2D g2d = (Graphics2D) g;
 		g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-		int x = (int) Util.posModulo(Main.robot.position.x * Constants.DISPLAY_SCALE.getDouble(), windowWidth); // robot position in pixels
-		int y = (int) (windowHeight - Util.posModulo(Main.robot.position.y * Constants.DISPLAY_SCALE.getDouble(), windowHeight));
+		int x = (int) Util.posModulo(Main.robot.x * Constants.DISPLAY_SCALE.getDouble(), windowWidth); // robot position in pixels
+		int y = (int) Util.posModulo(Main.robot.y * Constants.DISPLAY_SCALE.getDouble(), windowHeight);
 
-		// g.drawString("torque net " + Util.roundHundreths(Main.robot.torqueNet), 500, 575);
-		g.drawString("heading " + Util.roundHundreths(Main.robot.heading), 500, 600);
-		g.drawString("L angle " + Util.roundHundreths(Math.toDegrees(UserCode.controller.leftController.state.moduleAngle)), 500, 625);
-		g.drawString("R angle " + Util.roundHundreths(Math.toDegrees(UserCode.controller.rightController.state.moduleAngle)), 500, 650);
-		g.drawString("L odometer "+ UserCode.controller.leftController.odometer.x, 500, 675);
-		g.drawString("L wheelAngVelo "+ UserCode.controller.rightController.state.wheelAngVelo, 500, 700);
-		g.drawString("LT volt "+ Util.roundHundreths(Main.robot.leftModule.topMotor.voltage), 500, 725);
-		g.drawString("LB volt "+ Util.roundHundreths(Main.robot.leftModule.bottomMotor.voltage), 500, 750);
-		g.drawString("RT volt "+ Util.roundHundreths(Main.robot.rightModule.topMotor.voltage), 500, 775);
-		g.drawString("RB volt "+ Util.roundHundreths(Main.robot.rightModule.bottomMotor.voltage), 500, 800);
-
-
-		// g.drawString("LB motor speed " + Util.roundHundreths(Main.robot.leftModule.bottomMotor.angVelo), 500, 800);
-		// g.drawString("LT motor torque " + Util.roundHundreths(Main.robot.leftModule.topMotor.torque), 700, 775);
-		// g.drawString("LB motor torque " + Util.roundHundreths(Main.robot.leftModule.bottomMotor.torque), 700, 800);
-
+		g.drawString("left encoder pos "+ Main.robot.leftEncoderPosition(), 500, 700);
+		g.drawString("right encoder pos "+ Main.robot.rightEncoderPosition(), 500, 725);
+		g.drawString("linear velocity (ft/sec) " + Util.roundHundreths(Util.metersToFeet(Main.robot.linVelo)), 500, 750);
+		g.drawString("left power "+ Util.roundHundreths(UserCode.lPower), 500, 775);
+		g.drawString("right power "+ Util.roundHundreths(UserCode.rPower), 500, 800);
+		g.drawString("elapsed time " + Util.roundHundreths(Main.elaspedTime), 500, 825);
 
 		//drawing the grid
 		g.setColor(Color.GRAY.brighter());
@@ -88,22 +79,17 @@ public class GraphicSim extends JPanel implements MouseListener {
 		int robotCenterX = x + robotDisplayWidth/2;
 		int robotCenterY = y + robotDisplayWidth/2;
 
-		g2d.rotate(-Main.robot.heading, robotCenterX, robotCenterY); //angle is negative because g2d counts clockwise positive
+		g2d.rotate(Main.robot.heading, robotCenterX, robotCenterY);
 
 		g2d.scale(robotScale, robotScale);
-		g.translate((int) (x / robotScale), (int) (y / robotScale));
-		g.drawImage(robotImage, 0, 0, this);
+		
+		g.drawImage(robotImage, (int) (x / robotScale), (int) (y / robotScale), this);
+		g.setColor(Color.GREEN);
+		g.drawString("o", (int) (robotCenterX / robotScale), (int) (robotCenterY / robotScale));
 
 
-		drawFromCenter(g, moduleImage, 0, robotDisplayWidth/2, -Main.robot.leftModule.moduleAngle, this);
-
-		drawFromCenter(g, moduleImage, robotDisplayWidth, robotDisplayWidth/2, -Main.robot.rightModule.moduleAngle, this);
-
-
-
-
-		// g2d.setTransform(defaultTransform);
-		// g2d.scale(robotScale, robotScale);
+		g2d.setTransform(defaultTransform);
+		g2d.scale(robotScale, robotScale);
 
 		// g.drawImage(targetImage, (int) (1600 / robotScale), (int) (200 / robotScale), this);
 
@@ -114,14 +100,13 @@ public class GraphicSim extends JPanel implements MouseListener {
 		screenWidth = (int) Toolkit.getDefaultToolkit().getScreenSize().getWidth();
 		screenHeight = (int) Toolkit.getDefaultToolkit().getScreenSize().getHeight();
 		try {
-			robotFile = new File("./src/images/robot.png");
-			moduleFile = new File("./src/images/module.png");
+			robotFile = new File("./robot.png");
+			targetFile = new File("./target.png");
 
 			robotImage = ImageIO.read(robotFile);
-			moduleImage = ImageIO.read(moduleFile);
+			targetImage = ImageIO.read(targetFile);
 
 			setDisplayScales(robotFile);
-
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -147,15 +132,6 @@ public class GraphicSim extends JPanel implements MouseListener {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-	}
-
-	public void drawFromCenter(Graphics g, BufferedImage image, int x, int y, double rotation, ImageObserver imageObserver){
-		Graphics2D g2d = (Graphics2D) g;
-		AffineTransform initialTransform = g2d.getTransform();
-		g.translate(y + image.getWidth()/2, x + image.getWidth()/2);
-		g2d.rotate(rotation);
-		g.drawImage(image, -image.getWidth()/2, -image.getWidth()/2, imageObserver);
-		g2d.setTransform(initialTransform);
 	}
 
 	

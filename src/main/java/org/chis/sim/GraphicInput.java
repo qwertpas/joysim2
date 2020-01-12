@@ -28,21 +28,24 @@ public class GraphicInput extends JFrame implements ActionListener {
     private void initComponents() {
         add(scrollPane);
 
-        panel.add(buttonSave);
-        panel.add(buttonPause);
-        buttonSave.addActionListener(this);
-        buttonPause.addActionListener(this);
-
         for(Constant constant : Constants.constants){
             panel.add(constant.label);
             constant.field.setMaximumSize(new Dimension(200, constant.field.getPreferredScrollableViewportSize().height));
             panel.add(constant.field);
         }
 
+        // buttonSave.setActionCommand("SAVE");
+        // buttonPause.setActionCommand("PAUSE");
+        panel.add(buttonSave);
+        panel.add(buttonPause);
+        buttonSave.addActionListener(this);
+        buttonPause.addActionListener(this);
+
         pause();
     }
     
     public void actionPerformed(ActionEvent event) {
+        System.out.println("Button pressed...");
 
         if(event.getSource() == buttonSave){
             for(Constant constant : Constants.constants){
@@ -80,8 +83,8 @@ public class GraphicInput extends JFrame implements ActionListener {
 
     public static void resume(){
         Main.paused = false;
-        Main.robot.dt = 0;
-        Main.robot.lastTime = System.nanoTime();
+        Robot.dt = 0;
+        Robot.lastTime = System.nanoTime();
         Main.pausedTime = (System.nanoTime() * 1e-9) - Main.elaspedTime - Main.startTime;
         buttonPause.setText("Pause");
         buttonSave.setEnabled(false);

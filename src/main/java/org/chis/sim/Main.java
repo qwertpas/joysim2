@@ -1,5 +1,7 @@
 package org.chis.sim;
 
+import org.chis.sim.userclasses.UserCode;
+
 public class Main {
 
     public static Boolean paused = true;
@@ -8,13 +10,17 @@ public class Main {
     public static double pausedTime;
     public static double elaspedTime;
 
+    public static Motor leftMotor = new Motor();
+    public static Motor rightMotor = new Motor();
     public static Robot robot;
     public static GraphicDebug debug;
 
 
     public static void main(String[] args) {
+
         robot = new Robot();
 
+        robot.init();
         GraphicSim.init();
         Controls.init();
         
@@ -29,10 +35,9 @@ public class Main {
             while(!paused){
                 elaspedTime = (System.nanoTime() * 1e-9) - pausedTime - startTime;
                 robot.update();
-                if(Constants.printPowers) System.out.println(Controls.rawX + " " + Controls.rawY);
+                if(Constants.printJoystick) System.out.println(Controls.rawX + " " + Controls.rawY);
                 GraphicSim.sim.repaint();
             }
-
 
             try {
                 Thread.sleep(5);
@@ -60,7 +65,7 @@ public class Main {
                     Controls.updateControls();
                 }
                 try{
-                    Thread.sleep(10);
+                    Thread.sleep(20);
                 }catch(InterruptedException e){
                     e.printStackTrace();
                 }
@@ -72,5 +77,7 @@ public class Main {
         }
     } //END of UserCodeThread
 
+    
+    
 
 }

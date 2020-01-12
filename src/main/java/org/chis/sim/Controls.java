@@ -10,7 +10,7 @@ import net.java.games.input.Component.Identifier;
 
 public class Controls {
 
-    public static double rawX, rawY, rawZ, slider = 0;
+    public static double rawX, rawY = 0;
     public static ArrayList<Boolean> buttons = new ArrayList<Boolean>();
     public static Boolean usingMouse = false;
 
@@ -77,10 +77,6 @@ public class Controls {
                 rawX = value;
             }else if(componentIdentifier == Component.Identifier.Axis.Y){
                 rawY = value;
-            }else if(componentIdentifier == Component.Identifier.Axis.RZ){
-                rawZ = value;
-            }else if(componentIdentifier == Component.Identifier.Axis.SLIDER){
-                slider = value;
             }
 
             //commented out the other buttons to improve performance

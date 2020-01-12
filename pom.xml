@@ -4,11 +4,11 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>org.chis.sim</groupId>
-  <artifactId>diffsim2</artifactId>
+  <artifactId>joysim2</artifactId>
   <version>1.0-SNAPSHOT</version>
 
-  <name>diffsim2</name>
-  <url>https://github.com/qwertpas/diffsim2.git</url>
+  <name>joysim2</name>
+  <url>https://github.com/qwertpas/joysim2.git</url>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
