@@ -6,6 +6,8 @@ import org.chis.sim.Controls;
 import org.chis.sim.GraphicDebug;
 import org.chis.sim.Main;
 import org.chis.sim.GraphicDebug.Serie;
+import org.chis.sim.userclasses.DeltaVeloDrive.DeltaVeloState;
+import org.chis.sim.userclasses.DeltaVeloDrive.DrivePowers;
 
 
 public class UserCode{
@@ -13,26 +15,37 @@ public class UserCode{
     public static double lPower;
     public static double rPower;
 
+
+    static DeltaVeloDrive drive = new DeltaVeloDrive();
+    static DeltaVeloState currentState;
+    static DeltaVeloState targetState;
+
+
     public static void initialize(){ //this function is run once when the robot starts
         GraphicDebug.turnOnAll(); //displaying the graphs
     }
 
     public static void execute(){ //this function is run 50 times a second (every 0.02 second)
 
+        currentState = new DeltaVeloState(
+            Main.robot.rightEncoderPosition() - Main.robot.leftEncoderPosition(), 
+            Main.robot.leftEncoderVelocity(), 
+            Main.robot.rightEncoderVelocity()
+        );
+        targetState = new DeltaVeloState(
+            0, 
+            -Controls.rawY, 
+            -Controls.rawY
+        );
+        DrivePowers powers = drive.calcDrivePowers(currentState, targetState).scale(1);
 
-        
 
-
-
-
-
-
-
-
-        lPower = -Controls.rawY;
-        rPower = -Controls.rawY;
+        lPower = powers.lPower;
+        rPower = powers.rPower;
 
         setDrivePowers(lPower, rPower); //power ranges from -1 to 1
+        // setDrivePowers(-Controls.rawY, -Controls.rawY); //power ranges from -1 to 1
+
 
         graph(); //updating the graphs
     }

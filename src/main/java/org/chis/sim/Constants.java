@@ -24,9 +24,9 @@ public class Constants{
      * REAL PHYSICAL CONSTANTS (meters, kilograms, seconds) that come from GraphicInput
      * //////////////////////////////////////////// */ 
     public static Constant GEAR_RATIO = new Constant("GEAR_RATIO", 8, Type.DOUBLE);
-    public static Constant STALL_TORQUE = new Constant("STALL_TORQUE", 3.36, Type.DOUBLE); //76 oz-in for yellowjacket 3.7, converted to newton*meters
-    public static Constant FREE_SPEED = new Constant("FREE_SPEED", 936, Type.DOUBLE); //1620 rpm for yellowjacket 3.7, converted to rad/sec
-    public static Constant TICKS_PER_REV = new Constant("TICKS_PER_REV", 103.6, Type.DOUBLE); //1 rev of output shaft of yellowjacket 3.7 -> 103.6 encoder ticks
+    public static Constant STALL_TORQUE = new Constant("STALL_TORQUE", 3.36, Type.DOUBLE); //NEO
+    public static Constant FREE_SPEED = new Constant("FREE_SPEED", 936, Type.DOUBLE); //NEO
+    public static Constant TICKS_PER_REV = new Constant("TICKS_PER_REV", 10.72, Type.DOUBLE); //NEO on KOP drive
 
     public static Constant ROBOT_MASS = new Constant("ROBOT_MASS", 45, Type.DOUBLE);
     public static Constant ROBOT_WIDTH = new Constant("ROBOT_WIDTH", 0.6096, Type.DOUBLE);

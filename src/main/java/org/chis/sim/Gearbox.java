@@ -39,7 +39,7 @@ public class Gearbox{
     }
 
     public void setPower(double power){
-        double voltage = power * 12;
+        double voltage = Util.limit(power * 12, 12);
         for(int i = 0; i < motors.length; i++){
             motors[i].setVoltage(voltage);
         }

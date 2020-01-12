@@ -29,7 +29,6 @@ public class GraphicSim extends JPanel implements MouseListener {
 	AffineTransform defaultTransform = new AffineTransform(); //to reset the g2d position and rotation
 
 	static File robotFile;
-	static File targetFile;
 
 	static Image robotImage;
 	static Image targetImage;
@@ -100,11 +99,8 @@ public class GraphicSim extends JPanel implements MouseListener {
 		screenWidth = (int) Toolkit.getDefaultToolkit().getScreenSize().getWidth();
 		screenHeight = (int) Toolkit.getDefaultToolkit().getScreenSize().getHeight();
 		try {
-			robotFile = new File("./robot.png");
-			targetFile = new File("./target.png");
-
+			robotFile = new File("./src/images/robot.png");
 			robotImage = ImageIO.read(robotFile);
-			targetImage = ImageIO.read(targetFile);
 
 			setDisplayScales(robotFile);
 		} catch (IOException e) {
