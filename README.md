@@ -15,7 +15,7 @@ Still a work in progress, performance may vary on different computers, only test
 # How to use:
 1. Clone this repo from git or [download as a .zip file](https://github.com/qwertpas/joysim2/archive/master.zip) and unzip
 2. In VSCode, File > Open then select the joysim folder to open this as a VSCode project (make sure you have java extensions installed)
-2. Go to joysim/src/sim3 and open UserCode.java
+2. Go to joysim2/src/main/java/org/sim and open UserCode.java
 3. Code something to make the robot go (default makes the robot go straight forever)
 4. Run by either:
   - Select debug on the left side and click the green triangle
