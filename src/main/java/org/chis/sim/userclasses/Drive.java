@@ -19,7 +19,7 @@ public abstract class Drive {
     public double errorInDelta, errorInLVelo, errorInRVelo;
     public boolean isGoingStraight = true;
 
-    public abstract DrivePowers calcPowers(double joystickX, double joystickY, double leftDist, double rightDist, double leftVelo, double rightVelo);
+    public abstract DrivePowers calcPowers(double joystickX, double joystickY, double joystickZ, double leftDist, double rightDist, double leftVelo, double rightVelo);
 
     protected void getConstants(){
         MAX_SPEED = Constants.MAX_SPEED.getDouble();

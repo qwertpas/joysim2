@@ -6,7 +6,7 @@ import java.lang.Math;
 public class DeltaVeloDrive extends Drive{
 
     @Override
-    public DrivePowers calcPowers(double joystickX, double joystickY, double leftDist, double rightDist, double leftVelo, double rightVelo) {
+    public DrivePowers calcPowers(double joystickX, double joystickY, double joystickZ, double leftDist, double rightDist, double leftVelo, double rightVelo) {
         super.getConstants();
 
         if (Math.abs(joystickX) < JOYSTICK_DEADBAND && Math.abs(joystickY) < JOYSTICK_DEADBAND) {

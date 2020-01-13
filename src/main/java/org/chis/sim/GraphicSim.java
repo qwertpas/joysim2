@@ -64,6 +64,7 @@ public class GraphicSim extends JPanel implements MouseListener {
 		g.drawString("left power "+ Util.roundHundreths(UserCode.lPower), 500, 775);
 		g.drawString("right power "+ Util.roundHundreths(UserCode.rPower), 500, 800);
 		g.drawString("angular velo " + Util.roundHundreths(Main.robot.angVelo), 500, 825);
+		g.drawString("Z " + Util.roundHundreths(Controls.rawZ), 500, 850);
 
 		//drawing the grid
 		g.setColor(Color.GRAY.brighter());

@@ -6,29 +6,36 @@ import java.lang.Math;
 public class ConstantRadiusDrive extends Drive{
 
     public double targetRadiusReciprocal;
+    public boolean isQuickTurn;
 
     @Override
-    public DrivePowers calcPowers(double joystickX, double joystickY, double leftDist, double rightDist, double leftVelo, double rightVelo){
+    public DrivePowers calcPowers(double joystickX, double joystickY, double joystickZ, double leftDist, double rightDist, double leftVelo, double rightVelo){
         super.getConstants();
 
-        if(Math.abs(joystickX) < JOYSTICK_DEADBAND && Math.abs(joystickY) < JOYSTICK_DEADBAND){
+        if(Math.abs(joystickX) < JOYSTICK_DEADBAND && Math.abs(joystickY) < JOYSTICK_DEADBAND && Math.abs(joystickZ) < JOYSTICK_DEADBAND){
             return new DrivePowers(0, 0);
         }else{
             targetLinVelo = senscurve(-joystickY, SENSCURVE_EXP, MAX_SPEED);
             targetRadiusReciprocal = senscurve(joystickX, SENSCURVE_EXP, MAX_SPIN);
 
-            if(Math.abs(targetRadiusReciprocal) < SPIN_DEADBAND){
-                isGoingStraight = true;
-                targetAngVelo = 0;
-            }else{
+            if(Math.abs(targetRadiusReciprocal) > SPIN_DEADBAND){
                 isGoingStraight = false;
-                targetDelta = (rightDist - leftDist);
-                targetLVelo = targetLinVelo - targetAngVelo * Constants.HALF_DIST_BETWEEN_WHEELS;
-                targetRVelo = targetLinVelo + targetAngVelo * Constants.HALF_DIST_BETWEEN_WHEELS;
-                targetAngVelo = 0.5 * (leftVelo + rightVelo) * targetRadiusReciprocal;
+                isQuickTurn = false;
+                targetAngVelo = 0.5 * (leftVelo + rightVelo) * targetRadiusReciprocal * Math.copySign(1, targetLinVelo);
+            }else if(Math.abs(joystickZ) > SPIN_DEADBAND && Math.abs(targetLinVelo) < 0.1*MAX_SPEED){
+                isGoingStraight = false;
+                isQuickTurn = true;
+                targetAngVelo = senscurve(joystickZ, SENSCURVE_EXP, MAX_SPIN);
+            }else{
+                isGoingStraight = true;
+                isQuickTurn = false;
+                targetAngVelo = 0;
             }
-            
-            
+
+            targetDelta = (rightDist - leftDist);
+            targetLVelo = targetLinVelo - targetAngVelo * Constants.HALF_DIST_BETWEEN_WHEELS;
+            targetRVelo = targetLinVelo + targetAngVelo * Constants.HALF_DIST_BETWEEN_WHEELS;
+        
             errorInDelta = targetDelta - (rightDist - leftDist);
             errorInLVelo = targetLVelo - leftVelo;
             errorInRVelo = targetRVelo - rightVelo;

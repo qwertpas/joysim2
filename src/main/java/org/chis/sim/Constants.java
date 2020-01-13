@@ -54,7 +54,7 @@ public class Constants{
     public static Constant MAX_SPEED = new Constant("MAX_SPEED", 3.5, Type.DOUBLE);
     public static Constant MAX_SPIN = new Constant("MAX_SPIN", 5, Type.DOUBLE);
     public static Constant SENSCURVE_EXP = new Constant("SENSCURVE_EXP", 1.5, Type.DOUBLE);
-    public static Constant JOYSTICK_DEADBAND = new Constant("JOYSTICK_DEADBAND", 0.05, Type.DOUBLE);
+    public static Constant JOYSTICK_DEADBAND = new Constant("JOYSTICK_DEADBAND", 0.1, Type.DOUBLE);
     public static Constant SPIN_DEADBAND = new Constant("SPIN_DEADBAND", 0.1, Type.DOUBLE);
     public static Constant DELTA_CORRECTION = new Constant("DELTA_CORRECTION", 1, Type.DOUBLE);
     public static Constant VELO_CORRECTION = new Constant("VELO_CORRECTION", 1.2, Type.DOUBLE);

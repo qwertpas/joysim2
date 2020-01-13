@@ -27,7 +27,7 @@ public class UserCode{
                 drive = new ConstantRadiusDrive();
                 break;
             case 2:
-                // drive = new YPlusXDrive();
+                drive = new YPlusXDrive();
                 break;
         }
     }
@@ -36,7 +36,7 @@ public class UserCode{
 
         
 
-        DrivePowers powers = drive.calcPowers(Controls.rawX, Controls.rawY, getLeftDist(), getRightDist(), getLeftVelo(), getRightVelo());
+        DrivePowers powers = drive.calcPowers(Controls.rawX, Controls.rawY, Controls.rawZ, getLeftDist(), getRightDist(), getLeftVelo(), getRightVelo());
         lPower = powers.lPower;
         rPower = powers.rPower;
 
