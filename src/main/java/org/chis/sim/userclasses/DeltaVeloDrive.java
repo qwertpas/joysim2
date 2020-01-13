@@ -1,63 +1,72 @@
 package org.chis.sim.userclasses;
 
 import org.chis.sim.Constants;
-import org.ejml.simple.SimpleMatrix;
+import java.lang.Math;
 
 public class DeltaVeloDrive{
 
-    public double targetDelta = 0;
-    public DeltaVeloState targetState;
+    private double
+        MAX_SPEED,
+        MAX_SPIN,
+        SENSCURVE_EXP,
+        JOYSTICK_DEADBAND,
+        SPIN_DEADBAND,
+        DELTA_CORRECTION,
+        VELO_CORRECTION,
+        OPP_VELO_CORRECTION,
+        FRICTION_RATIO;
 
-    public DeltaVeloState calcTargetState(DeltaVeloState currentState, double targetLinVelo, double targetAngVelo){
-        if(targetAngVelo > 1){
-            targetDelta = currentState.deltaPos;
-        }
-        double targetLVelo = targetLinVelo - targetAngVelo * Constants.HALF_DIST_BETWEEN_WHEELS;
-        double targetRVelo = targetLinVelo + targetAngVelo * Constants.HALF_DIST_BETWEEN_WHEELS;
-        targetState = new DeltaVeloState(targetDelta, targetLVelo, targetRVelo);
-        return targetState;
-    }
+    public double targetLinVelo, targetAngVelo;
+    public double targetDelta, targetLVelo, targetRVelo;
+    public double errorInDelta, errorInLVelo, errorInRVelo;
+    public boolean isGoingStraight = true;
 
-    public DrivePowers calcDrivePowers(DeltaVeloState currentState, double targetLinVelo, double targetAngVelo){
+    DrivePowers calcDrivePowers(double joystickX, double joystickY, double leftDist, double rightDist, double leftVelo, double rightVelo){
+        MAX_SPEED = Constants.MAX_SPEED.getDouble();
+        MAX_SPIN = Constants.MAX_SPIN.getDouble();
+        SENSCURVE_EXP = Constants.SENSCURVE_EXP.getDouble();
+        SPIN_DEADBAND = Constants.SPIN_DEADBAND.getDouble();
+        DELTA_CORRECTION = Constants.DELTA_CORRECTION.getDouble();
+        VELO_CORRECTION = Constants.VELO_CORRECTION.getDouble();
+        OPP_VELO_CORRECTION = Constants.OPP_VELO_CORRECTION.getDouble();
+        FRICTION_RATIO = Constants.FRICTION_RATIO.getDouble();
 
-        DeltaVeloState targetState = calcTargetState(currentState, targetLinVelo, targetAngVelo);
+        if(Math.abs(joystickX) < JOYSTICK_DEADBAND && Math.abs(joystickY) < JOYSTICK_DEADBAND){
+            return new DrivePowers(0, 0);
+        }else{
+            targetLinVelo = senscurve(-joystickY, SENSCURVE_EXP, MAX_SPEED);
+            targetAngVelo = senscurve(joystickX, SENSCURVE_EXP, MAX_SPIN);
 
-        double deltaError = currentState.deltaPos - targetState.deltaPos;
-        double lVeloError = currentState.lVelo - targetState.lVelo;
-        double rVeloError = currentState.rVelo - targetState.rVelo;
-        
-        double lCorrectionPower = 
-            lVeloError * -0.01 +
-            deltaError * 0
-        ;
-        double rCorrectionPower = 
-            rVeloError * -0.01 -
-            deltaError * 0
-        ;
-        return new DrivePowers(lCorrectionPower, rCorrectionPower);
-    }
+            if(Math.abs(targetAngVelo) < SPIN_DEADBAND){
+                isGoingStraight = true;
+            }else{
+                isGoingStraight = false;
+                targetDelta = (rightDist - leftDist);
+            }
+            targetLVelo = targetLinVelo - targetAngVelo * Constants.HALF_DIST_BETWEEN_WHEELS;
+            targetRVelo = targetLinVelo + targetAngVelo * Constants.HALF_DIST_BETWEEN_WHEELS;
+            
+            errorInDelta = targetDelta - (rightDist - leftDist);
+            errorInLVelo = targetLVelo - leftVelo;
+            errorInRVelo = targetRVelo - rightVelo;
 
-    public static class DeltaVeloState{
-        public double deltaPos;
-        public double lVelo;
-        public double rVelo;
+            double lPower = 
+                errorInDelta * -DELTA_CORRECTION + 
+                errorInLVelo * VELO_CORRECTION +
+                errorInRVelo * -OPP_VELO_CORRECTION +
+                Math.copySign(FRICTION_RATIO, leftVelo) + leftVelo / MAX_SPEED;
+            double rPower = 
+                errorInDelta * DELTA_CORRECTION + 
+                errorInLVelo * -OPP_VELO_CORRECTION +
+                errorInRVelo * VELO_CORRECTION + 
+                Math.copySign(FRICTION_RATIO, rightVelo) + rightVelo / MAX_SPEED;
 
-        public DeltaVeloState(double deltaPos, double lVelo, double rVelo){
-            this.deltaPos = deltaPos;
-            this.lVelo = lVelo;
-            this.rVelo = rVelo;
-        }
-        
-        public SimpleMatrix get(){
-            return new SimpleMatrix(new double[][]{
-                { deltaPos },
-                { lVelo },
-                { rVelo }
-            });
-        }
-
-        public boolean goingStraight(){
-            return Math.abs(lVelo - rVelo) < 100;
+            if(Math.abs(lPower) > 1 || Math.abs(rPower) > 1){
+                double biggerValue = Math.max(Math.abs(lPower), Math.abs(rPower));
+                lPower = lPower / biggerValue;
+                rPower = rPower / biggerValue;
+            }
+            return new DrivePowers(lPower, rPower);
         }
     }
 
@@ -70,5 +79,9 @@ public class DeltaVeloDrive{
         public DrivePowers scale(double factor){
             return new DrivePowers(lPower * factor, rPower * factor);
         }
+    }
+
+    public double senscurve(double input, double exponent, double maxValue){
+        return Math.pow(Math.abs(input), exponent) * Math.copySign(maxValue, input);
     }
 }

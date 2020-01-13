@@ -48,28 +48,47 @@ public class Constants{
     public static Constant CONTROLLER_INDEX = new Constant("Controller_INDEX", 0, Type.INT); //which joystick?
     public static Constant DISPLAY_SCALE = new Constant("DISPLAY_SCALE", 75, Type.DOUBLE); //in pixels per meter
 
+    //DeltaVeloDrive
     public static Constant TURN_ERROR = new Constant("TURN_ERROR", 0.01, Type.DOUBLE); //difference in powers between the two sides (build problem)
-    public static Constant VELO_WEIGHT = new Constant("VELO_WEIGHT", 0.01, Type.DOUBLE); //difference in powers between the two sides (build problem)
-    public static Constant DELTA_WEIGHT = new Constant("DELTA_WEIGHT", 0.01, Type.DOUBLE); //difference in powers between the two sides (build problem)
-
+    public static Constant DRIVE_OPTION = new Constant("DRIVE_OPTION", 0, Type.INT);
+    public static Constant MAX_SPEED = new Constant("MAX_SPEED", 3.5, Type.DOUBLE);
+    public static Constant MAX_SPIN = new Constant("MAX_SPIN", 5, Type.DOUBLE);
+    public static Constant SENSCURVE_EXP = new Constant("SENSCURVE_EXP", 1.5, Type.DOUBLE);
+    public static Constant JOYSTICK_DEADBAND = new Constant("JOYSTICK_DEADBAND", 0.05, Type.DOUBLE);
+    public static Constant SPIN_DEADBAND = new Constant("SPIN_DEADBAND", 0.1, Type.DOUBLE);
+    public static Constant DELTA_CORRECTION = new Constant("DELTA_CORRECTION", 1, Type.DOUBLE);
+    public static Constant VELO_CORRECTION = new Constant("VELO_CORRECTION", 1.2, Type.DOUBLE);
+    public static Constant OPP_VELO_CORRECTION = new Constant("OPP_VELO_CORRECTION", 0.1, Type.DOUBLE);
+    public static Constant FRICTION_RATIO = new Constant("FRICTION_RATIO", 0.1, Type.DOUBLE);
 
     //constants that are editable by GraphicInput
-    public static Constant[] constants = {GEAR_RATIO, 
-                                   ROBOT_MASS, 
-                                   ROBOT_WIDTH, 
-                                   DIST_BETWEEN_WHEELS,
-                                   WHEEL_RADIUS,
-                                   STATIC_FRIC_COEFF,
-                                   KINE_FRIC_COEFF,
-                                   GEAR_STATIC_FRIC,
-                                   GEAR_KINE_FRIC,
-                                   GEAR_FRIC_THRESHOLD,
-                                   WHEEL_SCRUB_MULTIPLIER,
-                                   GRAV_ACCEL,
-                                   CONTROLLER_INDEX,
-                                   DISPLAY_SCALE,
-                                   TURN_ERROR,
-                                  };
+    public static Constant[] constants = {
+        TURN_ERROR,
+        DRIVE_OPTION,
+        MAX_SPEED,
+        MAX_SPIN,
+        SENSCURVE_EXP,
+        JOYSTICK_DEADBAND,
+        SPIN_DEADBAND,
+        DELTA_CORRECTION,
+        VELO_CORRECTION,
+        OPP_VELO_CORRECTION,
+        FRICTION_RATIO,
+        GEAR_RATIO, 
+        ROBOT_MASS, 
+        ROBOT_WIDTH, 
+        DIST_BETWEEN_WHEELS,
+        WHEEL_RADIUS,
+        STATIC_FRIC_COEFF,
+        KINE_FRIC_COEFF,
+        GEAR_STATIC_FRIC,
+        GEAR_KINE_FRIC,
+        GEAR_FRIC_THRESHOLD,
+        WHEEL_SCRUB_MULTIPLIER,
+        GRAV_ACCEL,
+        CONTROLLER_INDEX,
+        DISPLAY_SCALE,
+        };
 
     /** ////////////////////////////////
      * CALCULATED FROM REAL CONSTANTS
