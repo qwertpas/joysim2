@@ -7,7 +7,7 @@ public class Robot{
     double heading = 0;
 
     public double linVelo = 0;
-    double angVelo = 0;
+    public double angVelo = 0;
 
     double linAccel = 0.1;
     double angAccel = 0;

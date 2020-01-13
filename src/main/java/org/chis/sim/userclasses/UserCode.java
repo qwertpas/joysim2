@@ -7,13 +7,13 @@ import org.chis.sim.Controls;
 import org.chis.sim.GraphicDebug;
 import org.chis.sim.Main;
 import org.chis.sim.GraphicDebug.Serie;
-import org.chis.sim.userclasses.DeltaVeloDrive.DeltaVeloState;
-import org.chis.sim.userclasses.DeltaVeloDrive.DrivePowers;
 
 
 public class UserCode{
-
-    
+    public static final double MAX_SPEED = 3.5;
+    public static final double MAX_SPIN = 5;
+    public static final double JOYSTICK_DEADBAND = 0.05;
+    public static final double SPIN_DEADBAND = 0.1;
 
     public static double targetLinVelo, targetAngVelo;
     public static double targetDelta, targetLVelo, targetRVelo;
@@ -29,13 +29,13 @@ public class UserCode{
 
     public static void execute(){ //this function is run 50 times a second (every 0.02 second)
 
-        if(Math.abs(Controls.rawX) < 0.05 && Math.abs(Controls.rawY) < 0.05){
+        if(Math.abs(Controls.rawX) < JOYSTICK_DEADBAND && Math.abs(Controls.rawY) < JOYSTICK_DEADBAND){
             setDrivePowers(0, 0);
         }else{
-            targetLinVelo = -Controls.rawY * 3.4;
-            targetAngVelo = Controls.rawX * Controls.rawX * Math.copySign(10, Controls.rawX);
+            targetLinVelo = -Controls.rawY * MAX_SPEED;
+            targetAngVelo = Controls.rawX * Controls.rawX * Math.copySign(MAX_SPIN, Controls.rawX);
 
-            if(Math.abs(targetAngVelo) < 0.5){
+            if(Math.abs(targetAngVelo) < SPIN_DEADBAND){
                 isGoingStraight = true;
             }else{
                 isGoingStraight = false;
@@ -52,14 +52,20 @@ public class UserCode{
                 errorInDelta * -1 + 
                 errorInLVelo * 1.2 +
                 errorInRVelo * -0.1 +
-                Math.copySign(0.1, getLeftVelo()) + getLeftVelo()/3.4
+                Math.copySign(0.1, getLeftVelo()) + getLeftVelo() / MAX_SPEED
             );
             rPower = 1 * (
                 errorInDelta * 1 + 
                 errorInLVelo * -0.1 +
                 errorInRVelo * 1.2 + 
-                Math.copySign(0.1, getRightVelo()) + getRightVelo()/3.4
+                Math.copySign(0.1, getRightVelo()) + getRightVelo() / MAX_SPEED
             );
+
+            if(Math.abs(lPower) > 1 || Math.abs(rPower) > 1){
+                double biggerValue = Math.max(Math.abs(lPower), Math.abs(rPower));
+                lPower = lPower / biggerValue;
+                rPower = rPower / biggerValue;
+            }
 
             setDrivePowers(lPower, rPower);
         }
@@ -103,9 +109,9 @@ public class UserCode{
     static Serie targetDeltaSerie = new Serie(Color.RED, 3);
     static GraphicDebug positionWindow = new GraphicDebug("Delta", new Serie[]{currentDeltaSerie, targetDeltaSerie}, 100);
 
-    static Serie lPowerSerie = new Serie(Color.YELLOW, 3);
-    static Serie rPowerSerie = new Serie(Color.GREEN, 3);
-    static GraphicDebug powerWindow = new GraphicDebug("Power", new Serie[]{lPowerSerie, rPowerSerie}, 100);
+    static Serie currentAngVeloSerie = new Serie(Color.YELLOW, 3);
+    static Serie targetAngVeloSerie = new Serie(Color.GREEN, 3);
+    static GraphicDebug powerWindow = new GraphicDebug("AngVelo", new Serie[]{currentAngVeloSerie, targetAngVeloSerie}, 100);
     
     private static void graph(){
         currentVelocitySerie.addPoint(Main.elaspedTime, getLeftVelo());
@@ -114,8 +120,8 @@ public class UserCode{
         currentDeltaSerie.addPoint(Main.elaspedTime, getRightDist() - getLeftDist());
         targetDeltaSerie.addPoint(Main.elaspedTime, targetDelta);
 
-        lPowerSerie.addPoint(Main.elaspedTime, lPower);
-        rPowerSerie.addPoint(Main.elaspedTime, rPower);
+        currentAngVeloSerie.addPoint(Main.elaspedTime, Main.robot.angVelo);
+        targetAngVeloSerie.addPoint(Main.elaspedTime, targetAngVelo);
 
         GraphicDebug.paintAll();
     }
