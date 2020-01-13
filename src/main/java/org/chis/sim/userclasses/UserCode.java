@@ -7,21 +7,36 @@ import org.chis.sim.Controls;
 import org.chis.sim.GraphicDebug;
 import org.chis.sim.Main;
 import org.chis.sim.GraphicDebug.Serie;
-import org.chis.sim.userclasses.DeltaVeloDrive.DrivePowers;
+import org.chis.sim.userclasses.DeltaVeloDrive;
+import org.chis.sim.userclasses.ConstantRadiusDrive;
+import org.chis.sim.userclasses.Drive.DrivePowers;
 
 
 public class UserCode{
 
-    public static DeltaVeloDrive drive = new DeltaVeloDrive();
+    public static Drive drive;
     public static double lPower, rPower;
 
     public static void initialize(){ //this function is run once when the robot starts
         GraphicDebug.turnOnAll(); //displaying the graphs
+        switch(Constants.DRIVE_OPTION.getInt()){
+            case 0:
+                drive = new DeltaVeloDrive();
+                break;
+            case 1:
+                drive = new ConstantRadiusDrive();
+                break;
+            case 2:
+                // drive = new YPlusXDrive();
+                break;
+        }
     }
 
     public static void execute(){ //this function is run 50 times a second (every 0.02 second)
 
-        DrivePowers powers = drive.calcDrivePowers(Controls.rawX, Controls.rawY, getLeftDist(), getRightDist(), getLeftVelo(), getRightVelo());
+        
+
+        DrivePowers powers = drive.calcPowers(Controls.rawX, Controls.rawY, getLeftDist(), getRightDist(), getLeftVelo(), getRightVelo());
         lPower = powers.lPower;
         rPower = powers.rPower;
 

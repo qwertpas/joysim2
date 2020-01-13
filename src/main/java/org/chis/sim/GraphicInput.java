@@ -3,6 +3,7 @@ package org.chis.sim;
 import javax.swing.*;
 
 import org.chis.sim.Constants.Constant;
+import org.chis.sim.userclasses.UserCode;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -43,7 +44,6 @@ public class GraphicInput extends JFrame implements ActionListener {
     }
     
     public void actionPerformed(ActionEvent event) {
-        System.out.println("Button pressed...");
 
         if(event.getSource() == buttonSave){
             for(Constant constant : Constants.constants){
@@ -81,6 +81,7 @@ public class GraphicInput extends JFrame implements ActionListener {
 
     public static void resume(){
         Main.paused = false;
+        UserCode.initialize();
         Robot.dt = 0;
         Robot.lastTime = System.nanoTime();
         Main.pausedTime = (System.nanoTime() * 1e-9) - Main.elaspedTime - Main.startTime;

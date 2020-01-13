@@ -145,7 +145,6 @@ public class GraphicSim extends JPanel implements MouseListener {
 	}
 
 	public void mouseClicked(MouseEvent e) {
-		System.out.println("mouseClicked");
 	}
 
 
