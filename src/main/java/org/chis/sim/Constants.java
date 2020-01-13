@@ -23,9 +23,9 @@ public class Constants{
     /** ////////////////////////////////////////////
      * REAL PHYSICAL CONSTANTS (meters, kilograms, seconds) that come from GraphicInput
      * //////////////////////////////////////////// */ 
-    public static Constant GEAR_RATIO = new Constant("GEAR_RATIO", 8, Type.DOUBLE);
+    public static Constant GEAR_RATIO = new Constant("GEAR_RATIO", 10, Type.DOUBLE);
     public static Constant STALL_TORQUE = new Constant("STALL_TORQUE", 3.36, Type.DOUBLE); //NEO
-    public static Constant FREE_SPEED = new Constant("FREE_SPEED", 936, Type.DOUBLE); //NEO
+    public static Constant FREE_SPEED = new Constant("FREE_SPEED", 576, Type.DOUBLE); //NEO
     public static Constant TICKS_PER_REV = new Constant("TICKS_PER_REV", 10.72, Type.DOUBLE); //NEO on KOP drive
 
     public static Constant ROBOT_MASS = new Constant("ROBOT_MASS", 45, Type.DOUBLE);

@@ -34,8 +34,8 @@ public class Motor{
     }
 
     public double getEncoderVelocity(){
-        double rpm = angVelo / (2 * Math.PI);
-        double encoderTicksPerSec = rpm * Constants.TICKS_PER_REV.getDouble();
+        double rps = angVelo / (2 * Math.PI);
+        double encoderTicksPerSec = rps * Constants.TICKS_PER_REV.getDouble();
         return encoderTicksPerSec;
     }
 }

@@ -1,19 +1,40 @@
 package org.chis.sim.userclasses;
 
+import org.chis.sim.Constants;
 import org.ejml.simple.SimpleMatrix;
 
 public class DeltaVeloDrive{
 
-    private final SimpleMatrix K = new SimpleMatrix(new double[][]{
-        {  -0.22361, 1.2014, -1.1526 },
-     {  0.22361, -1.1526, 1.2014 }
-    });
-    
+    public double targetDelta = 0;
+    public DeltaVeloState targetState;
 
-    public DrivePowers calcDrivePowers(DeltaVeloState currentState, DeltaVeloState targetState){
-        SimpleMatrix error = currentState.get().minus(targetState.get());
-        SimpleMatrix powers = K.mult(error).negative();
-        return new DrivePowers(powers.get(0), powers.get(1));
+    public DeltaVeloState calcTargetState(DeltaVeloState currentState, double targetLinVelo, double targetAngVelo){
+        if(targetAngVelo > 1){
+            targetDelta = currentState.deltaPos;
+        }
+        double targetLVelo = targetLinVelo - targetAngVelo * Constants.HALF_DIST_BETWEEN_WHEELS;
+        double targetRVelo = targetLinVelo + targetAngVelo * Constants.HALF_DIST_BETWEEN_WHEELS;
+        targetState = new DeltaVeloState(targetDelta, targetLVelo, targetRVelo);
+        return targetState;
+    }
+
+    public DrivePowers calcDrivePowers(DeltaVeloState currentState, double targetLinVelo, double targetAngVelo){
+
+        DeltaVeloState targetState = calcTargetState(currentState, targetLinVelo, targetAngVelo);
+
+        double deltaError = currentState.deltaPos - targetState.deltaPos;
+        double lVeloError = currentState.lVelo - targetState.lVelo;
+        double rVeloError = currentState.rVelo - targetState.rVelo;
+        
+        double lCorrectionPower = 
+            lVeloError * -0.01 +
+            deltaError * 0
+        ;
+        double rCorrectionPower = 
+            rVeloError * -0.01 -
+            deltaError * 0
+        ;
+        return new DrivePowers(lCorrectionPower, rCorrectionPower);
     }
 
     public static class DeltaVeloState{
@@ -34,6 +55,10 @@ public class DeltaVeloDrive{
                 { rVelo }
             });
         }
+
+        public boolean goingStraight(){
+            return Math.abs(lVelo - rVelo) < 100;
+        }
     }
 
     public class DrivePowers{
@@ -46,10 +71,4 @@ public class DeltaVeloDrive{
             return new DrivePowers(lPower * factor, rPower * factor);
         }
     }
-
-    
-
-    
-
-
 }
