@@ -13,12 +13,15 @@ import org.chis.sim.userclasses.DeltaVeloDrive.DrivePowers;
 
 public class UserCode{
 
+    
+
+    public static double targetLinVelo, targetAngVelo;
+    public static double targetDelta, targetLVelo, targetRVelo;
+    public static double errorInDelta, errorInLVelo, errorInRVelo;
+    public static boolean isGoingStraight = true;
+
     public static double lPower;
     public static double rPower;
-
-
-    public static DeltaVeloDrive drive = new DeltaVeloDrive();
-    public static DeltaVeloState currentState;
 
     public static void initialize(){ //this function is run once when the robot starts
         GraphicDebug.turnOnAll(); //displaying the graphs
@@ -26,28 +29,36 @@ public class UserCode{
 
     public static void execute(){ //this function is run 50 times a second (every 0.02 second)
 
-        double targetLinVelo = -Controls.rawY * 3.4;
-        // double targetAngVelo = Controls.rawX * Controls.rawX * Math.copySign(5, Controls.rawX);
-        double targetAngVelo = 0;
+        targetLinVelo = -Controls.rawY * 3.4;
+        targetAngVelo = Controls.rawX * Controls.rawX * Math.copySign(5, Controls.rawX);
 
-        currentState = new DeltaVeloState(
-            getRightDist() - getLeftDist(), 
-            getLeftVelo(), 
-            getRightVelo()
+        if(Math.abs(targetAngVelo) < 0.5){
+            isGoingStraight = true;
+        }else{
+            isGoingStraight = false;
+            targetDelta = (getRightDist() - getLeftDist());
+        }
+        targetLVelo = targetLinVelo - targetAngVelo * Constants.HALF_DIST_BETWEEN_WHEELS;
+        targetRVelo = targetLinVelo + targetAngVelo * Constants.HALF_DIST_BETWEEN_WHEELS;
+        
+        errorInDelta = targetDelta - (getRightDist() - getLeftDist());
+        errorInLVelo = targetLVelo - getLeftVelo();
+        errorInRVelo = targetRVelo - getRightVelo();
+
+        lPower = 0.05 * (
+            errorInDelta * -0.22 + 
+            errorInLVelo * 1.2 +
+            errorInRVelo * -1.15
+        );
+        rPower = 0.05 * (
+            errorInDelta * 0.22 + 
+            errorInLVelo * -1.15 +
+            errorInRVelo * 1.2
         );
 
-        DrivePowers powers = drive.calcDrivePowers(currentState, targetLinVelo, targetAngVelo);
-
-        // lPower = powers.lPower;
-        // rPower = powers.rPower;
-
-        lPower = targetLinVelo - currentState.lVelo;
-        rPower = targetLinVelo + currentState.rVelo;
-
-        setDrivePowers(lPower*0.1, rPower*0.1);
+        setDrivePowers(lPower, rPower);
         // setDrivePowers(-Controls.rawY, -Controls.rawY);
         // setDrivePowers(-Controls.rawY, Controls.rawY);
-
 
         graph(); //updating the graphs
     }
@@ -91,11 +102,11 @@ public class UserCode{
     static GraphicDebug powerWindow = new GraphicDebug("Power", new Serie[]{lPowerSerie, rPowerSerie}, 100);
     
     private static void graph(){
-        currentVelocitySerie.addPoint(Main.elaspedTime, currentState.lVelo);
-        targetVelocitySerie.addPoint(Main.elaspedTime, drive.targetState.lVelo);
+        currentVelocitySerie.addPoint(Main.elaspedTime, getLeftVelo());
+        targetVelocitySerie.addPoint(Main.elaspedTime, targetLVelo);
 
-        currentDeltaSerie.addPoint(Main.elaspedTime, currentState.deltaPos);
-        targetDeltaSerie.addPoint(Main.elaspedTime, drive.targetState.deltaPos);
+        currentDeltaSerie.addPoint(Main.elaspedTime, getRightDist() - getLeftDist());
+        targetDeltaSerie.addPoint(Main.elaspedTime, targetDelta);
 
         lPowerSerie.addPoint(Main.elaspedTime, lPower);
         rPowerSerie.addPoint(Main.elaspedTime, rPower);
