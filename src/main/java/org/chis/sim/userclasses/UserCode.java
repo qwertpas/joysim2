@@ -29,36 +29,42 @@ public class UserCode{
 
     public static void execute(){ //this function is run 50 times a second (every 0.02 second)
 
-        targetLinVelo = -Controls.rawY * 3.4;
-        targetAngVelo = Controls.rawX * Controls.rawX * Math.copySign(5, Controls.rawX);
-
-        if(Math.abs(targetAngVelo) < 0.5){
-            isGoingStraight = true;
+        if(Math.abs(Controls.rawX) < 0.05 && Math.abs(Controls.rawY) < 0.05){
+            setDrivePowers(0, 0);
         }else{
-            isGoingStraight = false;
-            targetDelta = (getRightDist() - getLeftDist());
+            targetLinVelo = -Controls.rawY * 3.4;
+            targetAngVelo = Controls.rawX * Controls.rawX * Math.copySign(10, Controls.rawX);
+
+            if(Math.abs(targetAngVelo) < 0.5){
+                isGoingStraight = true;
+            }else{
+                isGoingStraight = false;
+                targetDelta = (getRightDist() - getLeftDist());
+            }
+            targetLVelo = targetLinVelo - targetAngVelo * Constants.HALF_DIST_BETWEEN_WHEELS;
+            targetRVelo = targetLinVelo + targetAngVelo * Constants.HALF_DIST_BETWEEN_WHEELS;
+            
+            errorInDelta = targetDelta - (getRightDist() - getLeftDist());
+            errorInLVelo = targetLVelo - getLeftVelo();
+            errorInRVelo = targetRVelo - getRightVelo();
+
+            lPower = 1 * (
+                errorInDelta * -1 + 
+                errorInLVelo * 1.2 +
+                errorInRVelo * -0.1 +
+                Math.copySign(0.1, getLeftVelo()) + getLeftVelo()/3.4
+            );
+            rPower = 1 * (
+                errorInDelta * 1 + 
+                errorInLVelo * -0.1 +
+                errorInRVelo * 1.2 + 
+                Math.copySign(0.1, getRightVelo()) + getRightVelo()/3.4
+            );
+
+            setDrivePowers(lPower, rPower);
         }
-        targetLVelo = targetLinVelo - targetAngVelo * Constants.HALF_DIST_BETWEEN_WHEELS;
-        targetRVelo = targetLinVelo + targetAngVelo * Constants.HALF_DIST_BETWEEN_WHEELS;
+
         
-        errorInDelta = targetDelta - (getRightDist() - getLeftDist());
-        errorInLVelo = targetLVelo - getLeftVelo();
-        errorInRVelo = targetRVelo - getRightVelo();
-
-        lPower = 0.05 * (
-            errorInDelta * -0.22 + 
-            errorInLVelo * 1.2 +
-            errorInRVelo * -1.15
-        );
-        rPower = 0.05 * (
-            errorInDelta * 0.22 + 
-            errorInLVelo * -1.15 +
-            errorInRVelo * 1.2
-        );
-
-        setDrivePowers(lPower, rPower);
-        // setDrivePowers(-Controls.rawY, -Controls.rawY);
-        // setDrivePowers(-Controls.rawY, Controls.rawY);
 
         graph(); //updating the graphs
     }
@@ -82,7 +88,7 @@ public class UserCode{
     }
 
     private static double convertEncoderΤοDist(double encoder){
-        return (encoder / Constants.TICKS_PER_REV.getDouble()) * Constants.GEAR_RATIO.getDouble() * 2 * Math.PI * Constants.WHEEL_RADIUS.getDouble();
+        return encoder / Constants.TICKS_PER_REV.getDouble() / Constants.GEAR_RATIO.getDouble() * 2 * Math.PI * Constants.WHEEL_RADIUS.getDouble();
     } 
 
 
