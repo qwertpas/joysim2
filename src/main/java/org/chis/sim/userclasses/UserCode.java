@@ -29,6 +29,9 @@ public class UserCode{
             case 2:
                 drive = new YPlusXDrive();
                 break;
+            case 3:
+                drive = new SimpleForwardDrive();
+                break;
         }
     }
 

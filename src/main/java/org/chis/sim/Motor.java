@@ -38,4 +38,11 @@ public class Motor{
         double encoderTicksPerSec = rps * Constants.TICKS_PER_REV.getDouble();
         return encoderTicksPerSec;
     }
+
+    public void resetEncoder(){
+        position = 0;
+        angVelo = 0;
+        torque = 0;
+        voltage = 0;
+    }
 }

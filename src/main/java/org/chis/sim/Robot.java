@@ -117,5 +117,20 @@ public class Robot{
         return Util.roundHundreths(encoderDistSum / (double)rightGearbox.motors.length);
     }
 
+    public void reset(){
+        x = 5;
+        y = 6;
+        heading = 0;
+        linVelo = 0;
+        angVelo = 0;
+
+        for(Motor motor : leftGearbox.motors){
+            motor.resetEncoder();
+        }
+        for(Motor motor : rightGearbox.motors){
+            motor.resetEncoder();
+        }
+    }
+
 
 }

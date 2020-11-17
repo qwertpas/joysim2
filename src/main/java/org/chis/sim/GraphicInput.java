@@ -16,6 +16,7 @@ public class GraphicInput extends JFrame implements ActionListener {
     JScrollPane scrollPane = new JScrollPane(panel);
     static JButton buttonSave = new JButton("Save");
     static JButton buttonPause = new JButton("Pause");
+    static JButton buttonReset = new JButton("Reset");
 
     
     public GraphicInput() {
@@ -31,8 +32,10 @@ public class GraphicInput extends JFrame implements ActionListener {
 
         panel.add(buttonSave);
         panel.add(buttonPause);
+        panel.add(buttonReset);
         buttonSave.addActionListener(this);
         buttonPause.addActionListener(this);
+        buttonReset.addActionListener(this);
 
         for(Constant constant : Constants.constants){
             panel.add(constant.label);
@@ -69,6 +72,13 @@ public class GraphicInput extends JFrame implements ActionListener {
             }else{
                 pause();
             }
+        }
+
+        if(event.getSource() == buttonReset){
+            Main.robot.reset();
+            GraphicSim.sim.repaint();
+            Main.elaspedTime = 0;
+            System.out.println("Resetted");
         }
     }
 
