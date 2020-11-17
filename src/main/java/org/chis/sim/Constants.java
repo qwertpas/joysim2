@@ -48,8 +48,9 @@ public class Constants{
     public static Constant CONTROLLER_INDEX = new Constant("Controller_INDEX", 0, Type.INT); //which joystick?
     public static Constant DISPLAY_SCALE = new Constant("DISPLAY_SCALE", 75, Type.DOUBLE); //in pixels per meter
 
-    //DeltaVeloDrive
-    public static Constant TURN_ERROR = new Constant("TURN_ERROR", 0.1, Type.DOUBLE); //difference in powers between the two sides (build problem)
+    public static Constant TURN_ERROR = new Constant("TURN_ERROR", 0.1, Type.DOUBLE); //difference in torque between the two sides (build problem)
+
+    //Joystick stuff
     public static Constant DRIVE_OPTION = new Constant("DRIVE_OPTION", 0, Type.INT);
     public static Constant MAX_SPEED = new Constant("MAX_SPEED", 3.5, Type.DOUBLE);
     public static Constant MAX_SPIN = new Constant("MAX_SPIN", 5, Type.DOUBLE);

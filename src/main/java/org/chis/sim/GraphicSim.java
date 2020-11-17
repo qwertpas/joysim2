@@ -31,7 +31,6 @@ public class GraphicSim extends JPanel implements MouseListener {
 	static File robotFile;
 
 	static Image robotImage;
-	static Image targetImage;
 
 	static int screenHeight;
 	static int screenWidth;
