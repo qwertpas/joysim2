@@ -32,6 +32,13 @@ public class GraphicDebug extends JPanel{
         }
     }
 
+    public static void resetAll(){
+        for(GraphicDebug graphicDebug : graphicDebugs){
+            graphicDebug.reset();
+        }
+    }
+
+
     
 
 
@@ -99,10 +106,10 @@ public class GraphicDebug extends JPanel{
     int bottomMargin = 20;
     int topMargin = 20;
 
-    double xMin = -0.01;
-    double xMax = 0.01;
-    double yMin = -0.01;
-    double yMax = 0.01;
+    double xMin = -0.0001;
+    double xMax = 0.0001;
+    double yMin = -0.0001;
+    double yMax = 0.0001;
 
     double plotWidth, plotHeight;
     double xAxis, yAxis;
@@ -176,6 +183,16 @@ public class GraphicDebug extends JPanel{
         yAxisPixel = (int) (leftMargin + yAxis); //an x coordinate
         xAxisPixel = (int)(frame.getContentPane().getHeight() - (bottomMargin + xAxis)); //a y coordinate
 
+    }
+
+    public void reset(){
+        for(Serie serie: series){
+            serie.points.clear();
+        }
+        xMin = -0.0001;
+        xMax = 0.0001;
+        yMin = -0.0001;
+        yMax = 0.0001;
     }
 
 

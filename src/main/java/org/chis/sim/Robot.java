@@ -124,6 +124,9 @@ public class Robot{
         linVelo = 0;
         angVelo = 0;
 
+        dt = 0;
+        lastTime = System.nanoTime();
+
         for(Motor motor : leftGearbox.motors){
             motor.resetEncoder();
         }

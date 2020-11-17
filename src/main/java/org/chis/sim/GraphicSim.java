@@ -61,10 +61,6 @@ public class GraphicSim extends JPanel implements MouseListener {
 		g.drawString("left encoder pos "+ Main.robot.leftEncoderPosition(), 500, 700);
 		g.drawString("right encoder pos "+ Main.robot.rightEncoderPosition(), 500, 725);
 		g.drawString("linear velocity (m/sec) " + Util.roundHundreths(Main.robot.linVelo), 500, 750);
-		g.drawString("left power "+ Util.roundHundreths(UserCode.lPower), 500, 775);
-		g.drawString("right power "+ Util.roundHundreths(UserCode.rPower), 500, 800);
-		g.drawString("angular velo " + Util.roundHundreths(Main.robot.angVelo), 500, 825);
-		g.drawString("Z " + Util.roundHundreths(Controls.rawZ), 500, 850);
 
 		//drawing the grid
 		g.setColor(Color.GRAY.brighter());
@@ -74,7 +70,6 @@ public class GraphicSim extends JPanel implements MouseListener {
 		for(int i = 0; i < screenHeight; i += Constants.DISPLAY_SCALE.getDouble() / Util.metersToFeet(1)){
 			g.drawLine(0, i, screenWidth, i);
 		}
-		
 
 		int robotCenterX = x + robotDisplayWidth/2;
 		int robotCenterY = y + robotDisplayWidth/2;
@@ -82,11 +77,7 @@ public class GraphicSim extends JPanel implements MouseListener {
 		g2d.rotate(Main.robot.heading, robotCenterX, robotCenterY);
 
 		g2d.scale(robotScale, robotScale);
-		
 		g.drawImage(robotImage, (int) (x / robotScale), (int) (y / robotScale), this);
-		g.setColor(Color.GREEN);
-		g.drawString("o", (int) (robotCenterX / robotScale), (int) (robotCenterY / robotScale));
-
 
 		g2d.setTransform(defaultTransform);
 		g2d.scale(robotScale, robotScale);

@@ -76,14 +76,21 @@ public class GraphicInput extends JFrame implements ActionListener {
 
         if(event.getSource() == buttonReset){
             Main.robot.reset();
+            GraphicDebug.resetAll();
             GraphicSim.sim.repaint();
-            Main.elaspedTime = 0;
             System.out.println("Resetted");
+            Main.startTime = System.nanoTime();
+            totalTimePaused = 0;
+            lastTimePaused = System.nanoTime();
+
         }
     }
 
+    static long lastTimePaused = 0;
+    static long totalTimePaused = 0;
     public static void pause(){
         Main.paused = true;
+        lastTimePaused = System.nanoTime();
         buttonPause.setText("Resume");
         buttonSave.setEnabled(true);
         System.out.println("Paused");
@@ -91,17 +98,14 @@ public class GraphicInput extends JFrame implements ActionListener {
 
     public static void resume(){
         Main.paused = false;
-        UserCode.initialize();
-        Robot.dt = 0;
+        // UserCode.initialize();
         Robot.lastTime = System.nanoTime();
-        Main.pausedTime = (System.nanoTime() * 1e-9) - Main.elaspedTime - Main.startTime;
+
+        totalTimePaused += System.nanoTime() - lastTimePaused;
+
         buttonPause.setText("Pause");
         buttonSave.setEnabled(false);
         System.out.println("Resume");
     }
     
-
-    public static void main(String[] args) { //for testing solely the GraphicInput class. not run during actual simulation
-        new GraphicInput().setVisible(true);
-    }
 }

@@ -7,7 +7,6 @@ public class Main {
     public static Boolean paused = true;
 
     public static double startTime;
-    public static double pausedTime;
     public static double elaspedTime;
 
     public static Motor leftMotor = new Motor();
@@ -23,19 +22,18 @@ public class Main {
         robot.init();
         GraphicSim.init();
         Controls.init();
-        
+        Constants.calcConstants();
 
         new GraphicInput().setVisible(true);
 
         new UserCodeThread();
 
-        startTime = System.nanoTime() * 1e-9;
+        startTime = System.nanoTime();
         while (true) {
 
             while(!paused){
-                elaspedTime = (System.nanoTime() * 1e-9) - pausedTime - startTime;
+                elaspedTime = (System.nanoTime() - GraphicInput.totalTimePaused - startTime) * 1e-9;
                 robot.update();
-                if(Constants.printJoystick) System.out.println(Controls.rawX + " " + Controls.rawY);
                 GraphicSim.sim.repaint();
             }
 
