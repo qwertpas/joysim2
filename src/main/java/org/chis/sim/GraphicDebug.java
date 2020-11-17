@@ -16,7 +16,6 @@ public class GraphicDebug extends JPanel{
     private static final long serialVersionUID = -3303992246381800667L;
 
     // static functions and variables, affects all window graphs
-
     public static ArrayList<GraphicDebug> graphicDebugs = new ArrayList<GraphicDebug>();
 
     public static void paintAll(){

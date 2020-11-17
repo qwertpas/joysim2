@@ -1,4 +1,4 @@
-package org.chis.sim.userclasses;
+package org.chis.sim.userclasses.joystickDrives;
 
 import org.chis.sim.Constants;
 

@@ -91,8 +91,6 @@ public class GraphicSim extends JPanel implements MouseListener {
 		g2d.setTransform(defaultTransform);
 		g2d.scale(robotScale, robotScale);
 
-		// g.drawImage(targetImage, (int) (1600 / robotScale), (int) (200 / robotScale), this);
-
 		
     }
     

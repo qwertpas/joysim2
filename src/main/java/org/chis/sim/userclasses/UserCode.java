@@ -7,9 +7,8 @@ import org.chis.sim.Controls;
 import org.chis.sim.GraphicDebug;
 import org.chis.sim.Main;
 import org.chis.sim.GraphicDebug.Serie;
-import org.chis.sim.userclasses.DeltaVeloDrive;
-import org.chis.sim.userclasses.ConstantRadiusDrive;
-import org.chis.sim.userclasses.Drive.DrivePowers;
+import org.chis.sim.userclasses.joystickDrives.*;
+import org.chis.sim.userclasses.joystickDrives.Drive.DrivePowers;
 
 
 public class UserCode{

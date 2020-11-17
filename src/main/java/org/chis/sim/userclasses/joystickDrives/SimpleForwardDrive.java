@@ -1,4 +1,4 @@
-package org.chis.sim.userclasses;
+package org.chis.sim.userclasses.joystickDrives;
 
 public class SimpleForwardDrive extends Drive{
     

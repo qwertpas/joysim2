@@ -2,13 +2,10 @@ package org.chis.sim;
 
 public class Gearbox{
 
-    public Motor[] motors = new Motor[2];
+    public Motor[] motors;
 
     private double angVelo;
 
-    public Gearbox(Motor[] motors){
-        this.motors = motors;
-    }
 
     public Gearbox(int numMotors){
         this.motors = new Motor[numMotors];
@@ -22,8 +19,9 @@ public class Gearbox{
         for(Motor motor : motors){
             totalTorque += motor.getTorque();
         }
+        totalTorque *= Constants.GEAR_RATIO.getDouble();
         return Util.applyFrictions(
-            totalTorque * Constants.GEAR_RATIO.getDouble(),
+            totalTorque,
             angVelo, 
             Constants.GEAR_STATIC_FRIC.getDouble(), 
             Constants.GEAR_KINE_FRIC.getDouble(), 
