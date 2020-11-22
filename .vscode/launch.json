@@ -6,6 +6,13 @@
     "configurations": [
         {
             "type": "java",
+            "name": "CodeLens (Launch) - SplineMatrices",
+            "request": "launch",
+            "mainClass": "org.chis.sim.userclasses.pathplanning.SplineMatrices",
+            "projectName": "joysim2"
+        },
+        {
+            "type": "java",
             "name": "CodeLens (Launch) - GraphicInput",
             "request": "launch",
             "mainClass": "org.chis.sim.GraphicInput",
