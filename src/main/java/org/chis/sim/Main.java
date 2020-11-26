@@ -58,10 +58,12 @@ public class Main {
 
         public void run(){
             UserCode.initialize();
+            GraphicDebug.turnOnAll(); //displaying the graphs
             while(!exit) {
                 if(!paused){
                     UserCode.execute();
                     Controls.updateControls();
+                    GraphicDebug.paintAll();    
                 }
                 try{
                     Thread.sleep(20);

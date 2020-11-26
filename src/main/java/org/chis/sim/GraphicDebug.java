@@ -44,14 +44,15 @@ public class GraphicDebug extends JPanel{
     JFrame frame;
     Dimension frameSize = new Dimension(300, 300);
     boolean isGraph;
+    boolean isTracking;
 
     ArrayList<Serie> series = new ArrayList<Serie>();
 
     ArrayList<String> prints = new ArrayList<String>();
 
-    public GraphicDebug(String name){ 
+    public GraphicDebug(){ 
         isGraph = false;
-        frame = new JFrame(name);
+        frame = new JFrame("Printouts");
 		frame.add(this);
         frame.setSize(frameSize);
         frame.setLocation((int) (GraphicSim.screenWidth - Util.posModulo((frameSize.getWidth() * graphicDebugs.size()), GraphicSim.screenWidth)), 0);
@@ -59,12 +60,13 @@ public class GraphicDebug extends JPanel{
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         graphicDebugs.add(this);
-        System.out.println("New GraphicDebug: " + name);
+        System.out.println("New GraphicDebug: " + "Printouts");
     }
 
-    public GraphicDebug(String name, Serie[] series_input, int maxPoints_input){ // same but allows creating series outside and no need to call addSerie()
+    public GraphicDebug(String name, int maxPoints, boolean tracking, Serie ...multipleSeries){
         isGraph = true;
-        for(Serie serie_input : series_input){
+        isTracking = tracking;
+        for(Serie serie_input : multipleSeries){
             series.add(serie_input);
         }
         frame = new JFrame(name);
@@ -76,7 +78,7 @@ public class GraphicDebug extends JPanel{
         calcScales();
 
         for(Serie serie : series){
-            serie.maxLength = maxPoints_input;
+            serie.maxLength = maxPoints;
         }
         
         graphicDebugs.add(this);
@@ -84,24 +86,6 @@ public class GraphicDebug extends JPanel{
         System.out.println("New GraphicDebug: " + name);
     }
 
-    public void addSerie(){
-        series.add(new Serie());
-    }
-
-    public void addSerie(Color color){
-        series.add(new Serie(color));
-    }
-
-    public void addSerie(int lineWidth){
-        series.add(new Serie(lineWidth));
-    }
-
-    public void addSerie(Color color, int lineWidth){
-        series.add(new Serie(color, lineWidth));
-    }
-
-    
-    
     int leftMargin = 20;
     int rightMargin = 20;
     int bottomMargin = 20;
@@ -120,10 +104,14 @@ public class GraphicDebug extends JPanel{
         super.paint(g);
 
         if(isGraph){
-            xMin = Integer.MAX_VALUE;
-            xMax = Integer.MIN_VALUE;
-            yMin = Integer.MAX_VALUE;
-            yMax = Integer.MIN_VALUE;
+
+            if(isTracking){
+                xMin = Integer.MAX_VALUE;
+                xMax = Integer.MIN_VALUE;
+                yMin = Integer.MAX_VALUE;
+                yMax = Integer.MIN_VALUE;
+            }
+            
 
             for(Serie serie : series){
                 if(serie.on){
@@ -146,10 +134,13 @@ public class GraphicDebug extends JPanel{
                 }
             }
 
-            xMin -= 0.1;
-            xMax += 0.1;
-            yMin -= 0.1;
-            yMax += 0.1;
+            if(isTracking){
+                xMin -= 0.1;
+                xMax += 0.1;
+                yMin -= 0.1;
+                yMax += 0.1;
+            }
+
 
             calcScales();
 
@@ -193,7 +184,7 @@ public class GraphicDebug extends JPanel{
 
     }
 
-    public void addText(String text, double number){
+    public void putNumber(String text, double number){
         for(int i = 0; i < prints.size(); i++){
             if(prints.get(i).startsWith(text)){
                 prints.set(i, text + ": " + number);

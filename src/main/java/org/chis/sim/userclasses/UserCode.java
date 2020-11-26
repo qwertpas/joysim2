@@ -11,12 +11,16 @@ import org.chis.sim.userclasses.joystickDrives.Drive.DrivePowers;
 
 public class UserCode{
 
-    static GraphicDebug printOuts = new GraphicDebug("Print Outs");
-    static Serie currentVelocitySerie = new Serie(Color.BLUE, 3);
-    static GraphicDebug velocityWindow = new GraphicDebug("Velocity", new Serie[]{currentVelocitySerie}, 200);
+    static GraphicDebug printOuts = new GraphicDebug();
+    static Serie leftVeloSerie = new Serie(Color.BLUE, 3);
+    static Serie rightVeloSerie = new Serie(Color.RED, 3);
+    static GraphicDebug velocityWindow = new GraphicDebug("Velocity", 200, true, leftVeloSerie, rightVeloSerie);
+    static Serie joystickSerie = new Serie(Color.GRAY, 10);
+    static GraphicDebug joystickWindow = new GraphicDebug("Joystick Position", 1, false, joystickSerie);
+
+
 
     public static void initialize(){ //this function is run once when the robot starts
-        GraphicDebug.turnOnAll(); //displaying the graphs
     }
 
     public static void execute(){ //this function is run 50 times a second (every 0.02 second)
@@ -32,11 +36,12 @@ public class UserCode{
 
 
         //printing and graphing values for debugging
-        printOuts.addText("LeftDist", getLeftDist());
-        printOuts.addText("RightDist", getRightDist());
+        printOuts.putNumber("LeftDist", getLeftDist());
+        printOuts.putNumber("RightDist", getRightDist());
 
-        currentVelocitySerie.addPoint(Main.elaspedTime, 0.5*(getLeftVelo() + getRightVelo()));
-        GraphicDebug.paintAll();    
+        leftVeloSerie.addPoint(Main.elaspedTime, getLeftVelo());
+        rightVeloSerie.addPoint(Main.elaspedTime, getRightVelo());
+        joystickSerie.addPoint(Controls.rawX, -Controls.rawY);
     }
 
 
