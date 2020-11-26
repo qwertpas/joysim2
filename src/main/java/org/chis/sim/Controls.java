@@ -80,8 +80,7 @@ public class Controls {
             }else if(componentIdentifier == Component.Identifier.Axis.RZ){
                 rawZ = value;
             }
-            // System.out.println(component + " : " + value);
-            // System.out.println(rawZ);
+
 
             //commented out the other buttons to improve performance
             if(componentIdentifier == Component.Identifier.Button._0){

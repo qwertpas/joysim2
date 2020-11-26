@@ -2,6 +2,7 @@ package org.chis.sim;
 
 import org.chis.sim.userclasses.UserCode;
 
+//runs all of the components together
 public class Main {
 
     public static Boolean paused = true;
@@ -18,8 +19,8 @@ public class Main {
     public static void main(String[] args) {
 
         robot = new Robot();
-
         robot.init();
+
         GraphicSim.init();
         Controls.init();
         Constants.calcConstants();
@@ -67,13 +68,12 @@ public class Main {
                 }catch(InterruptedException e){
                     e.printStackTrace();
                 }
-            } //END of UserCodeThread.run().while{}
-        } //END of UserCodeThread.run()
-
+            }
+        }
         public void stop(){
             exit = true;
         }
-    } //END of UserCodeThread
+    }
 
     
     

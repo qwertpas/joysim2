@@ -2,34 +2,25 @@ package org.chis.sim.userclasses;
 
 import java.awt.Color;
 
-import org.chis.sim.Constants;
-import org.chis.sim.GraphicDebug;
-import org.chis.sim.Main;
+import org.chis.sim.*;
 import org.chis.sim.GraphicDebug.Serie;
 
 
 public class UserCode{
 
-    static double lPower, rPower;
 
     public static void initialize(){ //this function is run once when the robot starts
         GraphicDebug.turnOnAll(); //displaying the graphs
     }
 
     public static void execute(){ //this function is run 50 times a second (every 0.02 second)
+        double lPower = -Controls.rawY - Controls.rawX;
+        double rPower = -Controls.rawY + Controls.rawX;
 
-        lPower = 1;
-        rPower = 1;
-        
-
-        setDrivePowers(lPower, rPower);
-
-        graph(); //updating the graphs
-    }
-
-    private static void setDrivePowers(double lPower, double rPower){
         Main.robot.leftGearbox.setPower(lPower);
         Main.robot.rightGearbox.setPower(rPower);
+
+        graph(); //updating the graphs
     }
 
     private static double getLeftDist(){
@@ -51,7 +42,6 @@ public class UserCode{
 
 
     // Motion graphs
-
     static Serie currentVelocitySerie = new Serie(Color.BLUE, 3);
     static GraphicDebug velocityWindow = new GraphicDebug("Velocity", new Serie[]{currentVelocitySerie}, 100);
 

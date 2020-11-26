@@ -3,12 +3,11 @@ package org.chis.sim;
 import javax.swing.*;
 
 import org.chis.sim.Constants.Constant;
-import org.chis.sim.userclasses.UserCode;
 
 import java.awt.*;
 import java.awt.event.*;
 
-
+//options panel
 public class GraphicInput extends JFrame implements ActionListener {
     private static final long serialVersionUID = 3664593486389802170L;
 
@@ -75,7 +74,7 @@ public class GraphicInput extends JFrame implements ActionListener {
         }
 
         if(event.getSource() == buttonReset){
-            Main.robot.reset();
+            Main.robot.init();
             GraphicDebug.resetAll();
             GraphicSim.sim.repaint();
             System.out.println("Resetted");
@@ -99,7 +98,7 @@ public class GraphicInput extends JFrame implements ActionListener {
     public static void resume(){
         Main.paused = false;
         // UserCode.initialize();
-        Robot.lastTime = System.nanoTime();
+        Main.robot.lastTime = System.nanoTime();
 
         totalTimePaused += System.nanoTime() - lastTimePaused;
 

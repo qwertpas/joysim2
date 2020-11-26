@@ -5,15 +5,15 @@ import java.text.DecimalFormat;
 
 public class Util {
 
-  public static double applyFrictions(double force, double velocity, double STATIC_FRIC, double KINE_FRIC,
-      double FRIC_THRESHOLD) {
+  public static double applyFrictions(double force, double velocity, double STATIC_FRIC, double KINE_FRIC, double FRIC_THRESHOLD) {
 
-    if (Math.abs(velocity) < FRIC_THRESHOLD && Math.abs(force) < STATIC_FRIC) { // if not moving, apply static friction
+    // if not moving and force is not enough to overcome static friction, net force is 0
+    if (Math.abs(velocity) < FRIC_THRESHOLD && Math.abs(force) < STATIC_FRIC) {
       return 0;
     }
-
-    double velocity_direction = Math.copySign(1, velocity);
-    return force - (velocity_direction * KINE_FRIC);
+  
+    // friction is opposite the direction of velocity
+    return force - Math.copySign(KINE_FRIC, velocity);
   }
 
   public static double rpmToRadSec(double rpm) { // Rotations per minute to Radians per second

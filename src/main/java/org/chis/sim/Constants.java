@@ -17,14 +17,15 @@ public class Constants{
      * REAL PHYSICAL CONSTANTS (meters, kilograms, seconds, Newtons, radians)
      * //////////////////////////////////////////// */ 
     public static Constant GEAR_RATIO = new Constant("GEAR_RATIO", 10, Type.DOUBLE);
-    public static Constant STALL_TORQUE = new Constant("STALL_TORQUE", 3.36, Type.DOUBLE); //NEO
-    public static Constant FREE_SPEED = new Constant("FREE_SPEED", 576, Type.DOUBLE); //NEO
+    public static Constant STALL_TORQUE = new Constant("STALL_TORQUE", 2.7, Type.DOUBLE); //NEO: https://www.revrobotics.com/content/docs/REV-21-1650-DS.pdf
+    public static Constant FREE_SPEED = new Constant("FREE_SPEED", 594, Type.DOUBLE); //NEO
     public static Constant TICKS_PER_REV = new Constant("TICKS_PER_REV", 10.72, Type.DOUBLE); //NEO on KOP drive
 
-    public static Constant ROBOT_MASS = new Constant("ROBOT_MASS", 45, Type.DOUBLE);
-    public static Constant ROBOT_WIDTH = new Constant("ROBOT_WIDTH", 0.6096, Type.DOUBLE);
-    public static Constant DIST_BETWEEN_WHEELS = new Constant("DIST_BETWEEN_WHEELS", 0.508, Type.DOUBLE);
-    public static Constant WHEEL_RADIUS = new Constant("WHEEL_RADIUS", 0.0635, Type.DOUBLE); //5 inch diameter
+    public static Constant ROBOT_MASS = new Constant("ROBOT_MASS", 45, Type.DOUBLE); //about 100 lbs
+    public static Constant ROBOT_WIDTH = new Constant("ROBOT_WIDTH", Util.inchesToMeters(24), Type.DOUBLE);
+    public static Constant DIST_BETWEEN_WHEELS = new Constant("DIST_BETWEEN_WHEELS", Util.inchesToMeters(20), Type.DOUBLE);
+    public static Constant WHEEL_RADIUS = new Constant("WHEEL_RADIUS", Util.inchesToMeters(2.5), Type.DOUBLE);
+
     public static Constant STATIC_FRIC_COEFF = new Constant("STATIC_FRIC_COEFF", 1.1, Type.DOUBLE); //between wheels and ground
     public static Constant KINE_FRIC_COEFF = new Constant("KINE_FRIC_COEFF", 0.7, Type.DOUBLE); //should be < static
 
@@ -38,7 +39,7 @@ public class Constants{
     public static Constant GRAV_ACCEL = new Constant("GRAV_ACCEL", 9.81, Type.DOUBLE);
 
     //Build problems
-    public static Constant TURN_ERROR = new Constant("TURN_ERROR", 0.1, Type.DOUBLE); //torque that will be added/subtracted from left/right
+    public static Constant TURN_ERROR = new Constant("TURN_ERROR", 0.0, Type.DOUBLE); //torque that will be added/subtracted from left/right
 
 
     /** ////////////////////////////////

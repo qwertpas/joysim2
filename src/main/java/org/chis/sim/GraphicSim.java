@@ -19,8 +19,7 @@ import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
-import org.chis.sim.userclasses.UserCode;
-
+//draws the robot
 public class GraphicSim extends JPanel implements MouseListener {
 	private static final long serialVersionUID = -87884863222799400L;
 
@@ -58,9 +57,14 @@ public class GraphicSim extends JPanel implements MouseListener {
 		int x = (int) Util.posModulo(Main.robot.x * Constants.DISPLAY_SCALE.getDouble(), windowWidth); // robot position in pixels
 		int y = (int) Util.posModulo(Main.robot.y * Constants.DISPLAY_SCALE.getDouble(), windowHeight);
 
-		g.drawString("left encoder pos "+ Main.robot.leftEncoderPosition(), 500, 700);
-		g.drawString("right encoder pos "+ Main.robot.rightEncoderPosition(), 500, 725);
+		g.drawString("left encoder "+ Main.robot.leftEncoderPosition(), 500, 700);
+		g.drawString("right encoder "+ Main.robot.rightEncoderPosition(), 500, 725);
 		g.drawString("linear velocity (m/sec) " + Util.roundHundreths(Main.robot.linVelo), 500, 750);
+		g.drawString("angular velocity (rad/sec) " + Util.roundHundreths(Main.robot.angVelo), 500, 775);
+		g.drawString("left power " + Util.roundHundreths(Main.robot.leftGearbox.getPower()), 500, 800);
+		g.drawString("right power " + Util.roundHundreths(Main.robot.rightGearbox.getPower()), 500, 825);
+		g.drawString("right power " + Util.roundHundreths(Main.robot.torqueMotors), 500, 850);
+		g.drawString("right power " + Util.roundHundreths(Main.robot.torqueNet), 500, 875);
 
 		//drawing the grid
 		g.setColor(Color.GRAY.brighter());
