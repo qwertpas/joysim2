@@ -32,8 +32,9 @@ public class Gearbox{
             totalTorque,
             angVelo, 
             Constants.GEAR_STATIC_FRIC.getDouble(), 
-            Constants.GEAR_KINE_FRIC.getDouble(), 
-            Constants.GEAR_FRIC_THRESHOLD.getDouble());
+            Constants.GEAR_KINE_FRIC.getDouble(),
+            Constants.GEAR_VISCOUS_FRIC.getDouble(), 
+            Constants.ANGVELO_THRESHOLD.getDouble());
     }
 
     public void setPower(double power_input){

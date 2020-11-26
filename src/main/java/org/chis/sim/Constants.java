@@ -7,12 +7,6 @@ import javax.swing.JTextField;
 
 public class Constants{
 
-    enum Type{
-        BOOLEAN, INT, DOUBLE, STRING;
-    }
-
-    JPanel panel = new JPanel();
-
     /** ////////////////////////////////////////////
      * REAL PHYSICAL CONSTANTS (meters, kilograms, seconds, Newtons, radians)
      * //////////////////////////////////////////// */ 
@@ -26,16 +20,20 @@ public class Constants{
     public static Constant DIST_BETWEEN_WHEELS = new Constant("DIST_BETWEEN_WHEELS", Util.inchesToMeters(20), Type.DOUBLE);
     public static Constant WHEEL_RADIUS = new Constant("WHEEL_RADIUS", Util.inchesToMeters(2.5), Type.DOUBLE);
 
+    //Slows robot rotation
     public static Constant STATIC_FRIC_COEFF = new Constant("STATIC_FRIC_COEFF", 1.1, Type.DOUBLE); //between wheels and ground
-    public static Constant KINE_FRIC_COEFF = new Constant("KINE_FRIC_COEFF", 0.7, Type.DOUBLE); //should be < static
+    public static Constant KINE_FRIC_COEFF = new Constant("KINE_FRIC_COEFF", 0.9, Type.DOUBLE); //should be < static
+    public static Constant SCRUB_COEFF = new Constant("SCRUB_COEFF", 0.2, Type.DOUBLE); //proportion of weight that rests on scrubbing wheels (depends on dropcenter)
 
-    //Overall makes motors slower
-    public static Constant GEAR_STATIC_FRIC = new Constant("GEAR_STATIC_FRIC", 0.5, Type.DOUBLE); //actual torque against gearbox when not moving, not the coefficient 
-    public static Constant GEAR_KINE_FRIC = new Constant("GEAR_KINE_FRIC", 0.5, Type.DOUBLE); //actual torque against gearbox when moving, not the coefficient 
-    public static Constant GEAR_FRIC_THRESHOLD = new Constant("GEAR_FRIC_THRESHOLD", 0.0001, Type.DOUBLE); //lowest motor speed in rad/sec considered as 'moving' to kine fric
+    //Slows gearboxes
+    public static Constant GEAR_STATIC_FRIC = new Constant("GEAR_STATIC_FRIC", 2, Type.DOUBLE); //actual torque against gearbox when not moving, not the coefficient 
+    public static Constant GEAR_KINE_FRIC = new Constant("GEAR_KINE_FRIC", 1.5, Type.DOUBLE); //actual torque against gearbox when moving, not the coefficient
+    public static Constant GEAR_VISCOUS_FRIC = new Constant("GEAR_VISCOUS_FRIC", 0.1, Type.DOUBLE); //coefficient that will be multiplied to gearbox angvelo to get friction
 
-    // Wheel scrub torque slows turning, coeff is a combo of fric coeff, drop center, robot length.
-    public static Constant WHEEL_SCRUB_MULTIPLIER = new Constant("WHEEL_SCRUB_MULTIPLIER", 15, Type.DOUBLE); 
+    //Thresholds that decide whether something is moving, so the sim can choose kinetic or static friction
+    public static Constant ANGVELO_THRESHOLD = new Constant("ANGVELO_THRESHOLD", 0.0001, Type.DOUBLE); //lowest moving rad/sec
+    public static Constant LINVELO_THRESHOLD = new Constant("LINVELO_THRESHOLD", 0.0001, Type.DOUBLE); //lowest moving m/sec
+
     public static Constant GRAV_ACCEL = new Constant("GRAV_ACCEL", 9.81, Type.DOUBLE);
 
     //Build problems
@@ -62,35 +60,46 @@ public class Constants{
     public static Constant VELO_CORRECTION = new Constant("VELO_CORRECTION", 1.2, Type.DOUBLE);
     public static Constant OPP_VELO_CORRECTION = new Constant("OPP_VELO_CORRECTION", 0.1, Type.DOUBLE);
     public static Constant FRICTION_RATIO = new Constant("FRICTION_RATIO", 0.1, Type.DOUBLE);
-    
+
+
     /** ////////////////////////////////
-     * CALCULATED FROM OTHERS
-     * //////////////////////////////// */     
-    public static double
-        HALF_DIST_BETWEEN_WHEELS,
-        STATIC_FRIC,
-        KINE_FRIC,
-        ROBOT_ROT_INERTIA
-    ;
-
-    public static void calcConstants(){
-        HALF_DIST_BETWEEN_WHEELS = DIST_BETWEEN_WHEELS.getDouble() / 2.0;
-        STATIC_FRIC = ROBOT_MASS.getDouble() * GRAV_ACCEL.getDouble() * STATIC_FRIC_COEFF.getDouble();
-        KINE_FRIC = ROBOT_MASS.getDouble() * GRAV_ACCEL.getDouble() * KINE_FRIC_COEFF.getDouble();
-        ROBOT_ROT_INERTIA = (1.0/6.0) * ROBOT_MASS.getDouble() * ROBOT_WIDTH.getDouble() * ROBOT_WIDTH.getDouble();
-    }
-
-    //constants that are editable by GraphicInput. Add them in as needed.
+     * ADD CONSTANTS TO THIS LIST TO BE EDITABLE
+     * //////////////////////////////// */  
     public static Constant[] constants = {
         TURN_ERROR,
         STATIC_FRIC_COEFF,
         KINE_FRIC_COEFF,
         GEAR_STATIC_FRIC,
         GEAR_KINE_FRIC,
-        GEAR_FRIC_THRESHOLD,
-        WHEEL_SCRUB_MULTIPLIER,
+        GEAR_VISCOUS_FRIC,
         DISPLAY_SCALE,
     };
+
+
+    
+    /** ////////////////////////////////
+     * CALCULATED FROM OTHERS
+     * //////////////////////////////// */     
+    public static double
+        HALF_DIST_BETWEEN_WHEELS,
+        SCRUB_STATIC,
+        SCRUB_KINE,
+        ROBOT_ROT_INERTIA
+    ;
+
+    public static void calcConstants(){
+        HALF_DIST_BETWEEN_WHEELS = 0.5 * DIST_BETWEEN_WHEELS.getDouble();
+        SCRUB_STATIC = SCRUB_COEFF.getDouble() * ROBOT_MASS.getDouble() * GRAV_ACCEL.getDouble() * STATIC_FRIC_COEFF.getDouble() * HALF_DIST_BETWEEN_WHEELS * Math.sqrt(2);
+        SCRUB_KINE = SCRUB_COEFF.getDouble() * ROBOT_MASS.getDouble() * GRAV_ACCEL.getDouble() * KINE_FRIC_COEFF.getDouble() * HALF_DIST_BETWEEN_WHEELS * Math.sqrt(2);
+        ROBOT_ROT_INERTIA = (1.0/6.0) * ROBOT_MASS.getDouble() * ROBOT_WIDTH.getDouble() * ROBOT_WIDTH.getDouble();
+    }
+
+
+    enum Type{
+        BOOLEAN, INT, DOUBLE, STRING;
+    }
+
+    JPanel panel = new JPanel();
 
     public static Boolean checkTypes(){
         Boolean good = true;

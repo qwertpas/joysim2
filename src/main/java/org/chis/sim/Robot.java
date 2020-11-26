@@ -3,6 +3,7 @@ package org.chis.sim;
 //overarching physics simulation
 public class Robot{
 
+    //each gearbox contains 2 motors
     public Gearbox leftGearbox = new Gearbox(2);
     public Gearbox rightGearbox = new Gearbox(2);
 
@@ -10,7 +11,7 @@ public class Robot{
     double torqueL, torqueR;
     double forceL, forceR;
 
-    //applied on the whole robot
+    //dynamics on the whole robot
     double forceNet;
     double torqueMotors, torqueNet;
 
@@ -58,19 +59,20 @@ public class Robot{
         torqueL = leftGearbox.getOutputTorque(veloL / Constants.WHEEL_RADIUS.getDouble());
         torqueR = rightGearbox.getOutputTorque(veloR / Constants.WHEEL_RADIUS.getDouble());
 
-        //add or subtract a constant that simulates hardware difference between the sides
-        torqueL -=  Constants.TURN_ERROR.getDouble();
-        torqueR +=  Constants.TURN_ERROR.getDouble();
-
         //convert torque of each gearbox into a force that moves the robot. Add them to get net force.
         forceL = torqueL / Constants.WHEEL_RADIUS.getDouble();
         forceR = torqueR / Constants.WHEEL_RADIUS.getDouble();
         forceNet = forceL + forceR; 
 
-        //calculate the torque that the gearboxes create to spin the robot, then apply rotational friction (wheels scrubbing).
+        //calculate the torque that the gearboxes create to spin the robot
         torqueMotors = (forceR - forceL) * Constants.HALF_DIST_BETWEEN_WHEELS;
-        torqueNet = Util.applyFrictions(torqueMotors, angVelo, 200, 100, 0.001);
 
+        //wheels scrub, applying a frictional torque that slows turning
+        torqueNet = Util.applyFrictions(torqueMotors, angVelo, Constants.SCRUB_STATIC, Constants.SCRUB_KINE, 0, Constants.ANGVELO_THRESHOLD.getDouble());
+
+        //add a constant that simulates hardware error making robot curve
+        torqueNet += Constants.TURN_ERROR.getDouble();
+        
         //Newton's 2nd Law to find accelerations given forces and torques
         angAccel = torqueNet / Constants.ROBOT_ROT_INERTIA;
         linAccel = forceNet / Constants.ROBOT_MASS.getDouble();
@@ -94,36 +96,37 @@ public class Robot{
     }
 
 
+    //Functions to get encoder data. You can use these in your own drive program in UserCode.java.
     public double leftEncoderPosition(){
-        double encoderDistSum = 0;
+        double encoderSum = 0;
         for(Motor motor : leftGearbox.motors){
-            encoderDistSum += motor.getEncoderPosition();
+            encoderSum += motor.getEncoderPosition();
         }
-        return Util.roundHundreths(encoderDistSum / (double)leftGearbox.motors.length);
+        return Util.roundHundreths(encoderSum / (double)leftGearbox.motors.length);
     }
 
     public double leftEncoderVelocity(){
-        double encoderDistSum = 0;
+        double encoderSum = 0;
         for(Motor motor : leftGearbox.motors){
-            encoderDistSum += motor.getEncoderVelocity();
+            encoderSum += motor.getEncoderVelocity();
         }
-        return Util.roundHundreths(encoderDistSum / (double)leftGearbox.motors.length);
+        return Util.roundHundreths(encoderSum / (double)leftGearbox.motors.length);
     }
 
     public double rightEncoderPosition(){
-        double encoderDistSum = 0;
+        double encoderSum = 0;
         for(Motor motor : rightGearbox.motors){
-            encoderDistSum += motor.getEncoderPosition();
+            encoderSum += motor.getEncoderPosition();
         }
-        return Util.roundHundreths(encoderDistSum / (double)rightGearbox.motors.length);
+        return Util.roundHundreths(encoderSum / (double)rightGearbox.motors.length);
     }
 
     public double rightEncoderVelocity(){
-        double encoderDistSum = 0;
+        double encoderSum = 0;
         for(Motor motor : rightGearbox.motors){
-            encoderDistSum += motor.getEncoderVelocity();
+            encoderSum += motor.getEncoderVelocity();
         }
-        return Util.roundHundreths(encoderDistSum / (double)rightGearbox.motors.length);
+        return Util.roundHundreths(encoderSum / (double)rightGearbox.motors.length);
     }
 
     

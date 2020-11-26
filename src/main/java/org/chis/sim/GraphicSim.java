@@ -59,12 +59,12 @@ public class GraphicSim extends JPanel implements MouseListener {
 
 		g.drawString("left encoder "+ Main.robot.leftEncoderPosition(), 500, 700);
 		g.drawString("right encoder "+ Main.robot.rightEncoderPosition(), 500, 725);
-		g.drawString("linear velocity (m/sec) " + Util.roundHundreths(Main.robot.linVelo), 500, 750);
-		g.drawString("angular velocity (rad/sec) " + Util.roundHundreths(Main.robot.angVelo), 500, 775);
+		g.drawString("torqueL " + Util.roundHundreths(Main.robot.torqueL), 500, 750);
+		g.drawString("torqueR " + Util.roundHundreths(Main.robot.torqueR), 500, 775);
 		g.drawString("left power " + Util.roundHundreths(Main.robot.leftGearbox.getPower()), 500, 800);
 		g.drawString("right power " + Util.roundHundreths(Main.robot.rightGearbox.getPower()), 500, 825);
-		g.drawString("right power " + Util.roundHundreths(Main.robot.torqueMotors), 500, 850);
-		g.drawString("right power " + Util.roundHundreths(Main.robot.torqueNet), 500, 875);
+		g.drawString("net force " + (Main.robot.forceNet), 500, 850);
+		g.drawString("net torque " + (Main.robot.torqueNet), 500, 875);
 
 		//drawing the grid
 		g.setColor(Color.GRAY.brighter());

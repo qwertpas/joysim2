@@ -4,6 +4,9 @@ import java.awt.Color;
 
 import org.chis.sim.*;
 import org.chis.sim.GraphicDebug.Serie;
+import org.chis.sim.userclasses.joystickDrives.Drive;
+import org.chis.sim.userclasses.joystickDrives.YPlusXDrive;
+import org.chis.sim.userclasses.joystickDrives.Drive.DrivePowers;
 
 
 public class UserCode{
@@ -14,8 +17,12 @@ public class UserCode{
     }
 
     public static void execute(){ //this function is run 50 times a second (every 0.02 second)
-        double lPower = -Controls.rawY - Controls.rawX;
-        double rPower = -Controls.rawY + Controls.rawX;
+
+        Drive drive = new YPlusXDrive();
+        DrivePowers powers = drive.calcPowers(Controls.rawX, Controls.rawY, 0, 0, 0, 0, 0);
+
+        double lPower = powers.lPower;
+        double rPower = powers.rPower;
 
         Main.robot.leftGearbox.setPower(lPower);
         Main.robot.rightGearbox.setPower(rPower);
