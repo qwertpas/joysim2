@@ -52,8 +52,7 @@ public class GraphicDebug extends JPanel{
 
     ArrayList<Serie> series = new ArrayList<Serie>();
 
-    JPanel textPanel = new JPanel();
-    ArrayList<JLabel> labels = new ArrayList<JLabel>();
+    ArrayList<String> prints = new ArrayList<String>();
 
     public GraphicDebug(String name){ 
         isGraph = false;
@@ -63,9 +62,6 @@ public class GraphicDebug extends JPanel{
         frame.setLocation((int) (GraphicSim.screenWidth - Util.posModulo((frameSize.getWidth() * graphicDebugs.size()), GraphicSim.screenWidth)), 0);
 		frame.setVisible(true);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
-        textPanel.setLayout(new BoxLayout(textPanel, BoxLayout.PAGE_AXIS));
-        add(textPanel);
 
         graphicDebugs.add(this);
         System.out.println("New GraphicDebug: " + name);
@@ -190,26 +186,27 @@ public class GraphicDebug extends JPanel{
             }
 
         } else { //if not graph, do text stuff
-            textPanel.add(new JLabel("Hello"));
-            for(JLabel label: labels){
-                textPanel.add(label);
+
+            int lineNumber = 1;
+            for(String str : prints){
+                g.drawString(str, 20, 20 * lineNumber);
+                lineNumber++;
             }
-            textPanel.add(new JLabel("Hello"));
-
-
+            
 
         }
 
     }
 
     public void addText(String text, double number){
-        for(JLabel label : labels){
-            if(label.getText().startsWith(text)){
+        for(int i = 0; i < prints.size(); i++){
+            if(prints.get(i).startsWith(text)){
+                prints.set(i, text + ": " + number);
                 return;
             }
         }
 
-        labels.add(new JLabel(text + ": " + number));
+        prints.add(text + ": " + number);
     }
 
     void calcScales(){
