@@ -10,6 +10,7 @@ public class Constants{
     /** ////////////////////////////////////////////
      * REAL PHYSICAL CONSTANTS (meters, kilograms, seconds, Newtons, radians)
      * //////////////////////////////////////////// */ 
+    public static Constant MAX_VOLTAGE = new Constant("MAX_VOLTAGE", 12, Type.DOUBLE);
     public static Constant GEAR_RATIO = new Constant("GEAR_RATIO", 10, Type.DOUBLE);
     public static Constant STALL_TORQUE = new Constant("STALL_TORQUE", 2.7, Type.DOUBLE); //NEO: https://www.revrobotics.com/content/docs/REV-21-1650-DS.pdf
     public static Constant FREE_SPEED = new Constant("FREE_SPEED", 594, Type.DOUBLE); //NEO
@@ -67,6 +68,7 @@ public class Constants{
      * //////////////////////////////// */  
     public static Constant[] constants = {
         TURN_ERROR,
+        GEAR_RATIO,
         STATIC_FRIC_COEFF,
         KINE_FRIC_COEFF,
         GEAR_STATIC_FRIC,
