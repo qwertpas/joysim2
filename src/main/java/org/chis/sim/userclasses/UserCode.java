@@ -11,6 +11,7 @@ import org.chis.sim.userclasses.joystickDrives.Drive.DrivePowers;
 
 public class UserCode{
 
+    static GraphicDebug printOuts = new GraphicDebug("Print Outs");
 
     public static void initialize(){ //this function is run once when the robot starts
         GraphicDebug.turnOnAll(); //displaying the graphs
@@ -26,6 +27,8 @@ public class UserCode{
 
         Main.robot.leftGearbox.setPower(lPower);
         Main.robot.rightGearbox.setPower(rPower);
+
+        printOuts.addText("lPower", lPower);
 
         graph(); //updating the graphs
     }
@@ -50,11 +53,12 @@ public class UserCode{
 
     // Motion graphs
     static Serie currentVelocitySerie = new Serie(Color.BLUE, 3);
-    static GraphicDebug velocityWindow = new GraphicDebug("Velocity", new Serie[]{currentVelocitySerie}, 100);
-
+    static Serie joystickSerie = new Serie(Color.RED, 3);
+    static GraphicDebug velocityWindow = new GraphicDebug("Velocity", new Serie[]{currentVelocitySerie, joystickSerie}, 200);
     
     private static void graph(){
         currentVelocitySerie.addPoint(Main.elaspedTime, 0.5*(getLeftVelo() + getRightVelo()));
+        joystickSerie.addPoint(Controls.rawX, -Controls.rawY);
 
         GraphicDebug.paintAll();
     }

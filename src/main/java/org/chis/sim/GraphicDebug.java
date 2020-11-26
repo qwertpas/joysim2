@@ -5,15 +5,21 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.ArrayList;
+
+import javax.swing.BoxLayout;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 
 import org.chis.sim.GraphicDebug.Serie.Point;
 import org.chis.sim.Util.Vector2D;
 
 public class GraphicDebug extends JPanel{
-    private static final long serialVersionUID = -3303992246381800667L;
+    private static final long serialVersionUID = -3303992246381800667L; //idk why it gives a warning if this isn't here
 
     // static functions and variables, affects all window graphs
     public static ArrayList<GraphicDebug> graphicDebugs = new ArrayList<GraphicDebug>();
@@ -39,30 +45,34 @@ public class GraphicDebug extends JPanel{
     }
 
 
-    
-
-
-
     // Instance functions and variables, for each window graph separately
     JFrame frame;
     Dimension frameSize = new Dimension(300, 300);
+    boolean isGraph;
 
     ArrayList<Serie> series = new ArrayList<Serie>();
 
-    public GraphicDebug(String name){ // call this from init() above. This makes a new window for graphs. Requires user to use addSerie() after
+    JPanel textPanel = new JPanel();
+    ArrayList<JLabel> labels = new ArrayList<JLabel>();
+
+    public GraphicDebug(String name){ 
+        isGraph = false;
         frame = new JFrame(name);
 		frame.add(this);
         frame.setSize(frameSize);
         frame.setLocation((int) (GraphicSim.screenWidth - Util.posModulo((frameSize.getWidth() * graphicDebugs.size()), GraphicSim.screenWidth)), 0);
 		frame.setVisible(true);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        calcScales();
-        graphicDebugs.add(this);
 
+        textPanel.setLayout(new BoxLayout(textPanel, BoxLayout.PAGE_AXIS));
+        add(textPanel);
+
+        graphicDebugs.add(this);
         System.out.println("New GraphicDebug: " + name);
     }
 
     public GraphicDebug(String name, Serie[] series_input, int maxPoints_input){ // same but allows creating series outside and no need to call addSerie()
+        isGraph = true;
         for(Serie serie_input : series_input){
             series.add(serie_input);
         }
@@ -106,10 +116,7 @@ public class GraphicDebug extends JPanel{
     int bottomMargin = 20;
     int topMargin = 20;
 
-    double xMin = -0.0001;
-    double xMax = 0.0001;
-    double yMin = -0.0001;
-    double yMax = 0.0001;
+    double xMin, xMax, yMin, yMax;
 
     double plotWidth, plotHeight;
     double xAxis, yAxis;
@@ -120,61 +127,100 @@ public class GraphicDebug extends JPanel{
     @Override
     public void paint(Graphics g) { //run by each instance of GraphicDebug (each window graph)
         super.paint(g);
-        Graphics2D g2d = (Graphics2D) g;
-        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-        g.drawString(xMin+"", xMinPixel, xAxisPixel);
-        g.drawString(xMax+"", xMaxPixel, xAxisPixel);
-        g.drawString(yMin+"", yAxisPixel, yMinPixel);
-        g.drawString(yMax+"", yAxisPixel, yMaxPixel);
-        
-        // draw x-axis
-        g.drawLine(xMinPixel, xAxisPixel, xMaxPixel, xAxisPixel);
-        // draw y-axis
-        g.drawLine(yAxisPixel, yMinPixel, yAxisPixel, yMaxPixel);
+        if(isGraph){
+            xMin = Integer.MAX_VALUE;
+            xMax = Integer.MIN_VALUE;
+            yMin = Integer.MAX_VALUE;
+            yMax = Integer.MIN_VALUE;
 
-        for(Serie serie : series){ //draw each scatterplot series in the graph
-            if(serie.on){
-                g.setColor(serie.color);
-                synchronized(serie.points){ //synchonized to avoid concurrent exceptions with usercode thread
-                    for(Point point : serie.points){ //draw all the points in the serie so far
+            for(Serie serie : series){
+                if(serie.on){
+                    synchronized(serie.points){ //synchonized to avoid concurrent exceptions with usercode thread
+                        for(Point point : serie.points){
+                            if(point.x < xMin) {
+                                xMin = point.x;
+                            }else if(point.x > xMax){
+                                xMax = point.x;
+                            }
 
-                        if(point.x < xMin) {
-                            xMin = point.x;
-                            calcScales();
-                        }else if(point.x > xMax){
-                            xMax = point.x;
-                            calcScales();
+                            if(point.y < yMin) {
+                                yMin = point.y;
+                            }else if(point.y > yMax){
+                                yMax = point.y;
+                            }
                         }
-
-                        if(point.y < yMin) {
-                            yMin = point.y;
-                            calcScales();
-                        }else if(point.y > yMax){
-                            yMax = point.y;
-                            calcScales();
-                        }
-
-                        int displayX = (int) (point.x * xScale + yAxis + leftMargin);
-                        int displayY = (int) (frame.getContentPane().getHeight() - (point.y * yScale + xAxis + bottomMargin));
-
-                        g.fillOval(displayX, displayY, serie.lineWidth, serie.lineWidth);
                     }
+
                 }
-                
+            }
+
+            xMin -= 0.1;
+            xMax += 0.1;
+            yMin -= 0.1;
+            yMax += 0.1;
+
+            calcScales();
+
+            //draw axes
+            g.drawLine(xMinPixel, xAxisPixel, xMaxPixel, xAxisPixel);
+            g.drawLine(yAxisPixel, yMinPixel, yAxisPixel, yMaxPixel);
+
+            //label axes
+            g.setColor(Color.BLACK);
+            NumberFormat numFormat = new DecimalFormat("#.###E0");
+            g.drawString(numFormat.format(xMin), xMinPixel - 20, frame.getContentPane().getHeight()/2);
+            g.drawString(numFormat.format(xMax), xMaxPixel - 40, frame.getContentPane().getHeight()/2);
+            g.drawString(numFormat.format(yMin), frame.getContentPane().getWidth()/2 - 20, yMinPixel);
+            g.drawString(numFormat.format(yMax), frame.getContentPane().getWidth()/2 - 20, yMaxPixel);
+
+            for(Serie serie : series){ //draw each scatterplot series in the graph
+                if(serie.on){
+                    g.setColor(serie.color);
+                    synchronized(serie.points){
+                        for(Point point : serie.points){ //draw all the points in the serie so far
+                            int displayX = (int) (point.x * xScale + yAxis + leftMargin);
+                            int displayY = (int) (frame.getContentPane().getHeight() - (point.y * yScale + xAxis + bottomMargin));
+
+                            g.fillOval(displayX, displayY, serie.lineWidth, serie.lineWidth);
+                        }
+                    }
+                    
+                }
+            }
+
+        } else { //if not graph, do text stuff
+            textPanel.add(new JLabel("Hello"));
+            for(JLabel label: labels){
+                textPanel.add(label);
+            }
+            textPanel.add(new JLabel("Hello"));
+
+
+
+        }
+
+    }
+
+    public void addText(String text, double number){
+        for(JLabel label : labels){
+            if(label.getText().startsWith(text)){
+                return;
             }
         }
+
+        labels.add(new JLabel(text + ": " + number));
     }
 
     void calcScales(){
         plotWidth = frame.getContentPane().getWidth() - leftMargin - rightMargin;
         plotHeight = frame.getContentPane().getHeight() - bottomMargin - topMargin;
         
-        yAxis = plotWidth * (Math.abs(xMin) / (xMax - xMin));
-        xScale = -yAxis / xMin;
+        yAxis = plotWidth * (-xMin / (xMax - xMin));
+        xScale = Math.abs(yAxis / xMin);
 
-        xAxis = plotHeight * (Math.abs(yMin) / (yMax - yMin));
-        yScale = -xAxis / yMin;
+        xAxis = plotHeight * (-yMin / (yMax - yMin));
+        yScale = Math.abs(xAxis / yMin);
 
         xMinPixel = leftMargin;
         xMaxPixel = frame.getContentPane().getWidth() - rightMargin;
@@ -189,10 +235,10 @@ public class GraphicDebug extends JPanel{
         for(Serie serie: series){
             serie.points.clear();
         }
-        xMin = -0.0001;
-        xMax = 0.0001;
-        yMin = -0.0001;
-        yMax = 0.0001;
+        xMin = Integer.MAX_VALUE;
+        xMax = Integer.MIN_VALUE;
+        yMin = Integer.MAX_VALUE;
+        yMax = Integer.MIN_VALUE;
     }
 
 
