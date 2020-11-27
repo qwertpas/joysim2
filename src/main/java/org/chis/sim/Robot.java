@@ -8,18 +8,18 @@ public class Robot{
     public Gearbox rightGearbox = new Gearbox(2);
 
     //applied by each gearbox
-    double torqueL, torqueR;
-    double forceL, forceR;
+    public double torqueL, torqueR;
+    public double forceL, forceR;
 
     //dynamics on the whole robot
-    double forceNet;
-    double torqueMotors, torqueNet;
+    public double forceNet;
+    public double torqueMotors, torqueNet;
 
     //robot state in meters, radians, and seconds
-    double x, y, heading;
-    double linVelo, angVelo;
-    double linAccel, angAccel;
-    double veloL, veloR;
+    public double x, y, heading;
+    public double linVelo, angVelo;
+    public double linAccel, angAccel;
+    public double veloL, veloR;
 
     //storing previous velos and accels for midpoint riemann sum integration (trapezoids)
     double linVeloPrev, angVeloPrev;
@@ -30,8 +30,8 @@ public class Robot{
     double lastTime;
 
     public void init(){
-        x = 5; //initial position (meters)
-        y = 6;
+        x = 0; //initial position (meters)
+        y = 0;
         heading = 0;
         linVelo = 0;
         angVelo = 0;

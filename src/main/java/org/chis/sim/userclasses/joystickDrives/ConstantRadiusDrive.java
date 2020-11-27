@@ -16,7 +16,7 @@ public class ConstantRadiusDrive extends Drive{
             return new DrivePowers(0, 0);
         }else{
             targetLinVelo = senscurve(-joystickY, SENSCURVE_EXP, MAX_SPEED);
-            targetRadiusReciprocal = senscurve(joystickX, SENSCURVE_EXP, MAX_SPIN);
+            targetRadiusReciprocal = senscurve(-joystickX, SENSCURVE_EXP, MAX_SPIN);
 
             if(Math.abs(targetRadiusReciprocal) > SPIN_DEADBAND){
                 isGoingStraight = false;

@@ -50,6 +50,7 @@ public class GraphicDebug extends JPanel{
 
     ArrayList<String> prints = new ArrayList<String>();
 
+    /** Creates a window that shows text. Use putNumber() to add text.*/
     public GraphicDebug(){ 
         isGraph = false;
         frame = new JFrame("Printouts");
@@ -63,6 +64,13 @@ public class GraphicDebug extends JPanel{
         System.out.println("New GraphicDebug: " + "Printouts");
     }
 
+    /**
+    * Creates a window that graphs 2D points. Update the Serie(s) using addPoint() and it will update.
+    * @param  name name of the window
+    * @param  maxPoints maximum number of points to be shown
+    * @param  tracking whether or not the graph should automatically scale to the visible points
+    * @param  multipleSeries put one or more Serie objects here to be graphed
+    */
     public GraphicDebug(String name, int maxPoints, boolean tracking, Serie ...multipleSeries){
         isGraph = true;
         isTracking = tracking;
@@ -184,6 +192,11 @@ public class GraphicDebug extends JPanel{
 
     }
 
+    /**
+     * Prints the number and its label on the GraphicDebug window. Run this every time you want to update the number.
+     * @param text What the number means.
+     * @param number The number you want to print
+     */
     public void putNumber(String text, double number){
         for(int i = 0; i < prints.size(); i++){
             if(prints.get(i).startsWith(text)){
@@ -232,22 +245,21 @@ public class GraphicDebug extends JPanel{
         volatile ArrayList<Point> points = new ArrayList<Point>();
         volatile Boolean on = false; //set to true once UserCode initializes
 
-        public Serie(){
-        }
-
-        public Serie(Color color_input){
-            color = color_input;
-        }
-
-        public Serie(int lineWidth_input){
-            lineWidth = lineWidth_input;
-        }
-
+        /** 
+         * An object that contains a set of points. Feed into a GraphicDebug to graph it.
+         * @param color_input color you want the dots to be
+         * @param lineWidth_input size you want the dots to be
+         */
         public Serie(Color color_input, int lineWidth_input){
             color = color_input;
             lineWidth = lineWidth_input;
         }
 
+        /**
+         * Adds a point into the serie. If the serie is already at max length, it removes the oldest point.
+         * @param x x-coordinate of the point
+         * @param y y-coordinate of the point
+         */
         public void addPoint(double x, double y){
             synchronized(points){ //synchronized so usercode thread can call this while painting and avoid concurrentModificationException
                 points.add(new Point(x, y));

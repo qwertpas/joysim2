@@ -1,8 +1,15 @@
 package org.chis.sim.userclasses;
 
 import java.awt.Color;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.util.ArrayList;
+
+import javax.imageio.ImageIO;
 
 import org.chis.sim.*;
+import org.chis.sim.Util.Vector2D;
+import org.chis.sim.Util.Vector2D.Type;
 import org.chis.sim.GraphicDebug.Serie;
 import org.chis.sim.userclasses.joystickDrives.Drive;
 import org.chis.sim.userclasses.joystickDrives.YPlusXDrive;
@@ -18,8 +25,6 @@ public class UserCode{
     static Serie joystickSerie = new Serie(Color.GRAY, 10);
     static GraphicDebug joystickWindow = new GraphicDebug("Joystick Position", 1, false, joystickSerie);
 
-
-
     public static void initialize(){ //this function is run once when the robot starts
     }
 
@@ -34,14 +39,20 @@ public class UserCode{
         Main.robot.leftGearbox.setPower(lPower);
         Main.robot.rightGearbox.setPower(rPower);
 
-
         //printing and graphing values for debugging
-        printOuts.putNumber("LeftDist", getLeftDist());
-        printOuts.putNumber("RightDist", getRightDist());
+        printOuts.putNumber("x", Main.robot.x);
+        printOuts.putNumber("y", Main.robot.y);
+        printOuts.putNumber("Heading", Main.robot.heading);
 
         leftVeloSerie.addPoint(Main.elaspedTime, getLeftVelo());
         rightVeloSerie.addPoint(Main.elaspedTime, getRightVelo());
         joystickSerie.addPoint(Controls.rawX, -Controls.rawY);
+
+        ArrayList<Vector2D> path = new ArrayList<Vector2D>();
+        for(float t = 0; t < 2*Math.PI; t += 0.05){
+            path.add(new Vector2D(1, t, Type.POLAR));
+        }
+        GraphicSim.drawPoints(path);
     }
 
 

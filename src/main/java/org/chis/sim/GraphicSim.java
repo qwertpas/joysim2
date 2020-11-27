@@ -3,13 +3,7 @@ package org.chis.sim;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.Image;
-import java.awt.Point;
-import java.awt.RenderingHints;
 import java.awt.Toolkit;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -19,18 +13,15 @@ import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
+import org.chis.sim.Util.Vector2D;
+import org.chis.sim.Util.Vector2D.Type;
+
 //draws the robot
-public class GraphicSim extends JPanel implements MouseListener {
-	private static final long serialVersionUID = -87884863222799400L;
+public class GraphicSim extends JPanel {
 
 	static JFrame frame;
 
-	AffineTransform defaultTransform = new AffineTransform(); //to reset the g2d position and rotation
-
-	static File robotFile;
-
-	static Image robotImage;
-	static Image targetImage;
+	static BufferedImage robotImage;
 
 	static int screenHeight;
 	static int screenWidth;
@@ -40,54 +31,16 @@ public class GraphicSim extends JPanel implements MouseListener {
 	static int robotDisplayWidth;
 	static double robotScale;
 
-	static ArrayList<Point> points = new ArrayList<Point>();
+	public static String imagesDirectory = "./src/images/";
 
-  	GraphicSim() {
-		addMouseListener(this);
-	}
+	public static ArrayList<Vector2D> userPoints = new ArrayList<Vector2D>();
 
-    @Override
-	public void paint(Graphics g) { //gets called iteratively by JFrame
-		double windowWidth = frame.getContentPane().getSize().getWidth();
-		double windowHeight = frame.getContentPane().getSize().getHeight();
-		super.paint(g);
-		Graphics2D g2d = (Graphics2D) g;
-		g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-
-		int x = (int) Util.posModulo(Main.robot.x * Constants.DISPLAY_SCALE.getDouble(), windowWidth); // robot position in pixels
-		int y = (int) Util.posModulo(Main.robot.y * Constants.DISPLAY_SCALE.getDouble(), windowHeight);
-
-		//drawing the grid
-		g.setColor(Color.GRAY.brighter());
-		for(int i = 0; i < screenWidth; i += Constants.DISPLAY_SCALE.getDouble() / Util.metersToFeet(1)){
-			g.drawLine(i, 0, i, screenHeight);
-		}
-		for(int i = 0; i < screenHeight; i += Constants.DISPLAY_SCALE.getDouble() / Util.metersToFeet(1)){
-			g.drawLine(0, i, screenWidth, i);
-		}
-
-		int robotCenterX = x + robotDisplayWidth/2;
-		int robotCenterY = y + robotDisplayWidth/2;
-
-		g2d.rotate(Main.robot.heading, robotCenterX, robotCenterY);
-
-		g2d.scale(robotScale, robotScale);
-		g.drawImage(robotImage, (int) (x / robotScale), (int) (y / robotScale), this);
-
-		g2d.setTransform(defaultTransform);
-		g2d.scale(robotScale, robotScale);
-
-		
-    }
-    
 	public static void init(){
 		screenWidth = (int) Toolkit.getDefaultToolkit().getScreenSize().getWidth();
 		screenHeight = (int) Toolkit.getDefaultToolkit().getScreenSize().getHeight();
 		try {
-			robotFile = new File("./src/images/robot.png");
-			robotImage = ImageIO.read(robotFile);
-
-			setDisplayScales(robotFile);
+			robotImage = ImageIO.read(new File(imagesDirectory, "robot.png"));
+			rescaleRobot();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -100,37 +53,67 @@ public class GraphicSim extends JPanel implements MouseListener {
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	}
 
-	private static void setDisplayScales(File file) throws IOException {
-		BufferedImage bufferedImage = ImageIO.read(file);
-		robotImgHeight = bufferedImage.getHeight();
+    @Override
+	public void paint(Graphics g) { //gets called iteratively by JFrame
+		super.paint(g);
+		Graphics2D g2d = (Graphics2D) g;
+
+		// int x = (int) Util.posModulo(Main.robot.x * Constants.DISPLAY_SCALE.getDouble(), windowWidth); // robot position in pixels
+		// int y = (int) Util.posModulo(Main.robot.y * Constants.DISPLAY_SCALE.getDouble(), windowHeight);
+
+		//drawing the meter grid 
+		g.setColor(Color.GRAY.brighter());
+		for(int i = 0; i < screenWidth; i += Constants.DISPLAY_SCALE.getDouble()){
+			g.drawLine(i, 0, i, screenHeight);
+		}
+		for(int i = 0; i < screenHeight; i += Constants.DISPLAY_SCALE.getDouble()){
+			g.drawLine(0, i, screenWidth, i);
+		}
+
+		//scaling into robot transform
+		int[] robotPixelPos = convertMeterToPixel(Main.robot.x, Main.robot.y, g.getClipBounds().getWidth(), g.getClipBounds().getHeight(), true);
+        g2d.translate(robotPixelPos[0] + robotImage.getWidth()/2, robotPixelPos[1] + robotImage.getWidth()/2);
+        g2d.scale(robotScale, robotScale);
+		g2d.rotate(-Main.robot.heading);
+		g.drawImage(robotImage, -robotImage.getWidth()/2, -robotImage.getHeight()/2, this);
+
+		g.setColor(Color.RED);
+		for(Vector2D pos : userPoints){
+			g.drawOval((int) (pos.x * Constants.DISPLAY_SCALE.getDouble() / robotScale), (int) (pos.y * Constants.DISPLAY_SCALE.getDouble() / robotScale), 1, 1);
+		}
+
+	}
+
+	public static void drawPoints(ArrayList<Vector2D> points){
+		userPoints = points;
+	}
+	
+    public int[] convertMeterToPixel(double xMeters, double yMeters, double windowWidth, double windowHeight, boolean alwaysOnscreen){
+        xMeters += 0.5 * windowWidth / Constants.DISPLAY_SCALE.getDouble();
+        yMeters += 0.5 * windowHeight / Constants.DISPLAY_SCALE.getDouble();
+        int pixelX = (int) (xMeters * Constants.DISPLAY_SCALE.getDouble());
+		int pixelY = (int) (-yMeters * Constants.DISPLAY_SCALE.getDouble()); //negative because down is positive in JFrame
+		
+		if(alwaysOnscreen){
+			pixelX = (int) Util.posModulo(pixelX, windowWidth);
+			pixelY = (int) Util.posModulo(pixelY, windowHeight);
+		}
+		
+        return new int[] {pixelX, pixelY};
+    }
+
+
+	
+
+	
+
+	public static void rescaleRobot() {
+		robotImgHeight = robotImage.getHeight();
 		robotDisplayWidth = (int) (Constants.DISPLAY_SCALE.getDouble() * Constants.ROBOT_WIDTH.getDouble()); //width of robot in pixels
 		robotScale = (double) robotDisplayWidth / robotImgHeight; //scaling robot image to fit display width.
 	}
 
-	public static void rescale(){
-		try {
-			setDisplayScales(robotFile);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
 
-	
-
-    public void mousePressed(MouseEvent e) {
-	}
-
-	public void mouseReleased(MouseEvent e) {
-	}
-
-	public void mouseEntered(MouseEvent e) {
-	}
-
-	public void mouseExited(MouseEvent e) {
-	}
-
-	public void mouseClicked(MouseEvent e) {
-	}
-
-
+	//JPanel requires this, idk why
+	private static final long serialVersionUID = -87884863222799400L;
 }

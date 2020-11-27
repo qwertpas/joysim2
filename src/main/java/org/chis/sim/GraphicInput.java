@@ -54,7 +54,7 @@ public class GraphicInput extends JFrame implements ActionListener {
             }
             if(Constants.checkTypes()){ //if all the constants inputted are the correct type
                 Constants.calcConstants();
-                GraphicSim.rescale();
+                GraphicSim.rescaleRobot();
                 System.out.println("Saved");
             }else{
                 Main.paused = true;

@@ -13,7 +13,7 @@ public class DeltaVeloDrive extends Drive{
             return new DrivePowers(0, 0);
         } else {
             targetLinVelo = senscurve(-joystickY, SENSCURVE_EXP, MAX_SPEED);
-            targetAngVelo = senscurve(joystickX, SENSCURVE_EXP, MAX_SPIN);
+            targetAngVelo = senscurve(-joystickX, SENSCURVE_EXP, MAX_SPIN);
 
             if (Math.abs(targetAngVelo) < SPIN_DEADBAND) {
                 isGoingStraight = true;

@@ -44,6 +44,10 @@ public class Gearbox{
         return outputTorque;
     }
 
+    /**
+     * Sets a power for all of the motors in that gearbox. This will then be sent to motors as a proportion of max voltage.
+     * @param power_input Should be between -1 and 1
+     */
     public void setPower(double power_input){
         power = Util.limit(power_input, 1);
         for(int i = 0; i < motors.length; i++){
