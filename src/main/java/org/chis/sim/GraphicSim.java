@@ -14,7 +14,6 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 import org.chis.sim.Util.Vector2D;
-import org.chis.sim.Util.Vector2D.Type;
 
 //draws the robot
 public class GraphicSim extends JPanel {

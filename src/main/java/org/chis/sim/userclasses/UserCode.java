@@ -1,11 +1,7 @@
 package org.chis.sim.userclasses;
 
 import java.awt.Color;
-import java.awt.image.BufferedImage;
-import java.io.File;
 import java.util.ArrayList;
-
-import javax.imageio.ImageIO;
 
 import org.chis.sim.*;
 import org.chis.sim.Util.Vector2D;
@@ -13,7 +9,6 @@ import org.chis.sim.Util.Vector2D.Type;
 import org.chis.sim.GraphicDebug.Serie;
 import org.chis.sim.userclasses.joystickDrives.CheesyDrive;
 import org.chis.sim.userclasses.joystickDrives.Drive;
-import org.chis.sim.userclasses.joystickDrives.YPlusXDrive;
 import org.chis.sim.userclasses.joystickDrives.Drive.DrivePowers;
 
 
@@ -50,7 +45,7 @@ public class UserCode{
         //plotting points relative to the robot
         ArrayList<Vector2D> path = new ArrayList<Vector2D>();
         for(float t = -2; t < 2; t += 0.05){
-            path.add(new Vector2D(Math.pow(t, 3) - t, t, Type.CARTESIAN));
+            path.add(new Vector2D(t, Math.pow(t, 3) - t, Type.CARTESIAN)); //draws cubic y = x^3 - x
         }
         GraphicSim.drawPoints(path);
     }
