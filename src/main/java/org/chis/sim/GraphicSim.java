@@ -79,7 +79,7 @@ public class GraphicSim extends JPanel {
 
 		g.setColor(Color.RED);
 		for(Vector2D pos : userPoints){
-			g.drawOval((int) (pos.x * Constants.DISPLAY_SCALE.getDouble() / robotScale), (int) (pos.y * Constants.DISPLAY_SCALE.getDouble() / robotScale), 1, 1);
+			g.fillOval((int) (pos.x * Constants.DISPLAY_SCALE.getDouble() / robotScale), (int) (pos.y * Constants.DISPLAY_SCALE.getDouble() / robotScale), 3, 3);
 		}
 
 	}

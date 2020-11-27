@@ -11,6 +11,7 @@ import org.chis.sim.*;
 import org.chis.sim.Util.Vector2D;
 import org.chis.sim.Util.Vector2D.Type;
 import org.chis.sim.GraphicDebug.Serie;
+import org.chis.sim.userclasses.joystickDrives.CheesyDrive;
 import org.chis.sim.userclasses.joystickDrives.Drive;
 import org.chis.sim.userclasses.joystickDrives.YPlusXDrive;
 import org.chis.sim.userclasses.joystickDrives.Drive.DrivePowers;
@@ -30,27 +31,26 @@ public class UserCode{
 
     public static void execute(){ //this function is run 50 times a second (every 0.02 second)
 
-        Drive drive = new YPlusXDrive();
+        Drive drive = new CheesyDrive();
         DrivePowers powers = drive.calcPowers(Controls.rawX, Controls.rawY, 0, 0, 0, 0, 0);
 
-        double lPower = powers.lPower;
-        double rPower = powers.rPower;
+        Main.robot.leftGearbox.setPower(powers.lPower);
+        Main.robot.rightGearbox.setPower(powers.rPower);
 
-        Main.robot.leftGearbox.setPower(lPower);
-        Main.robot.rightGearbox.setPower(rPower);
-
-        //printing and graphing values for debugging
+        //printing values in separate window
         printOuts.putNumber("x", Main.robot.x);
         printOuts.putNumber("y", Main.robot.y);
         printOuts.putNumber("Heading", Main.robot.heading);
 
+        //graphs in separate windows
         leftVeloSerie.addPoint(Main.elaspedTime, getLeftVelo());
         rightVeloSerie.addPoint(Main.elaspedTime, getRightVelo());
         joystickSerie.addPoint(Controls.rawX, -Controls.rawY);
 
+        //plotting points relative to the robot
         ArrayList<Vector2D> path = new ArrayList<Vector2D>();
-        for(float t = 0; t < 2*Math.PI; t += 0.05){
-            path.add(new Vector2D(1, t, Type.POLAR));
+        for(float t = -2; t < 2; t += 0.05){
+            path.add(new Vector2D(Math.pow(t, 3) - t, t, Type.CARTESIAN));
         }
         GraphicSim.drawPoints(path);
     }
