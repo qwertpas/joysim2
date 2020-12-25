@@ -413,7 +413,7 @@ public class Util {
     }
 
     public Vector2D subtract(Vector2D valueToSubtract) {
-      return new Vector2D(this.x + valueToSubtract.x, this.y + valueToSubtract.y, Type.CARTESIAN);
+      return new Vector2D(this.x - valueToSubtract.x, this.y - valueToSubtract.y, Type.CARTESIAN);
     }
 
     public double dotProduct(Vector2D f) {
@@ -435,7 +435,7 @@ public class Util {
     public Vector2D rotate(double radiansToRotate) {
       double sin = Math.sin(radiansToRotate);
       double cos = Math.cos(radiansToRotate);
-      return new Vector2D(x * cos - y * sin, x * sin + y * cos, Type.CARTESIAN);
+      return new Vector2D(this.x * cos - this.y * sin, this.x * sin + this.y * cos, Type.CARTESIAN);
     }
 
     public double getMagnitude() {

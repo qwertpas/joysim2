@@ -22,12 +22,10 @@ public class GraphicSim extends JPanel {
 
 	static BufferedImage robotImage;
 
-	static int screenHeight;
-	static int screenWidth;
+	static int screenHeight, screenWidth;
+	static int windowWidth, windowHeight;
 	static GraphicSim sim;
 
-	static int robotImgHeight;
-	static int robotDisplayWidth;
 	static double robotScale;
 
 	public static String imagesDirectory = "./src/images/";
@@ -46,7 +44,7 @@ public class GraphicSim extends JPanel {
 		frame = new JFrame("Robot Sim");
 		sim = new GraphicSim();
 		frame.add(sim);
-		frame.setSize((int) screenWidth-200, (int) screenHeight);
+		frame.setSize(screenWidth - 200, screenHeight);
 		frame.setLocation(200, 0);
 		frame.setVisible(true);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -57,59 +55,70 @@ public class GraphicSim extends JPanel {
 		super.paint(g);
 		Graphics2D g2d = (Graphics2D) g;
 
-		// int x = (int) Util.posModulo(Main.robot.x * Constants.DISPLAY_SCALE.getDouble(), windowWidth); // robot position in pixels
-		// int y = (int) Util.posModulo(Main.robot.y * Constants.DISPLAY_SCALE.getDouble(), windowHeight);
+		windowWidth = (int) g.getClipBounds().getWidth();
+		windowHeight = (int) g.getClipBounds().getHeight();
 
-		//drawing the meter grid 
-		g.setColor(Color.GRAY.brighter());
-		for(int i = 0; i < screenWidth; i += Constants.DISPLAY_SCALE.getDouble()){
-			g.drawLine(i, 0, i, screenHeight);
-		}
-		for(int i = 0; i < screenHeight; i += Constants.DISPLAY_SCALE.getDouble()){
-			g.drawLine(0, i, screenWidth, i);
+		//center the grid and flip y so it is up (default y is down)
+		g2d.translate(windowWidth/2, windowHeight/2);
+		g2d.scale(1, -1);
+
+		//draw vertical lines
+		for(int ix = 0; ix < windowWidth/2; ix += Constants.DISPLAY_SCALE.getInt()){
+			if(ix == 0){
+				g.setColor(Color.GRAY.darker());
+			}else{
+				g.setColor(Color.GRAY.brighter());
+			}
+			g.drawLine(ix, -windowHeight/2, ix, windowHeight/2);
+			g.drawLine(-ix, -windowHeight/2, -ix, windowHeight/2);
 		}
 
-		//scaling into robot transform
-		int[] robotPixelPos = convertMeterToPixel(Main.robot.x, Main.robot.y, g.getClipBounds().getWidth(), g.getClipBounds().getHeight(), true);
-        g2d.translate(robotPixelPos[0] + robotImage.getWidth()/2, robotPixelPos[1] + robotImage.getWidth()/2);
+		//draw horizontal lines
+		for(int iy = 0; iy < windowHeight/2; iy += Constants.DISPLAY_SCALE.getInt()){
+			if(iy == 0){
+				g.setColor(Color.GRAY.darker());
+			}else{
+				g.setColor(Color.GRAY.brighter());
+			}
+			g.drawLine(-windowWidth/2, iy, windowWidth/2, iy);
+			g.drawLine(-windowWidth/2, -iy, windowWidth/2, -iy);
+		}
+
+		//robot transform in pixels
+		int[] robotPixelPos = meterToPixel(Main.robot.x, Main.robot.y);
+		g2d.translate(robotPixelPos[0], robotPixelPos[1]);
+		g2d.rotate(Main.robot.heading);
+
+		//scaling down to draw robot and then scaling back up
         g2d.scale(robotScale, robotScale);
-		g2d.rotate(-Main.robot.heading);
 		g.drawImage(robotImage, -robotImage.getWidth()/2, -robotImage.getHeight()/2, this);
+		g2d.scale(1/robotScale, 1/robotScale);
 
+		//draw points at pixel scale
 		g.setColor(Color.RED);
 		for(Vector2D pos : userPoints){
-			g.fillOval((int) (pos.x * Constants.DISPLAY_SCALE.getDouble() / robotScale), (int) (pos.y * Constants.DISPLAY_SCALE.getDouble() / robotScale), 3, 3);
+			int[] scaledPos = meterToPixel(pos.x, pos.y);
+			g.fillOval(scaledPos[0], scaledPos[1], 3, 3);
 		}
 
 	}
 
-	public static void drawPoints(ArrayList<Vector2D> points){
-		userPoints = points;
-	}
 	
-    public int[] convertMeterToPixel(double xMeters, double yMeters, double windowWidth, double windowHeight, boolean alwaysOnscreen){
-        xMeters += 0.5 * windowWidth / Constants.DISPLAY_SCALE.getDouble();
-        yMeters += 0.5 * windowHeight / Constants.DISPLAY_SCALE.getDouble();
+	
+    public int[] meterToPixel(double xMeters, double yMeters){
         int pixelX = (int) (xMeters * Constants.DISPLAY_SCALE.getDouble());
-		int pixelY = (int) (-yMeters * Constants.DISPLAY_SCALE.getDouble()); //negative because down is positive in JFrame
-		
-		if(alwaysOnscreen){
-			pixelX = (int) Util.posModulo(pixelX, windowWidth);
-			pixelY = (int) Util.posModulo(pixelY, windowHeight);
-		}
-		
+		int pixelY = (int) (yMeters * Constants.DISPLAY_SCALE.getDouble());
         return new int[] {pixelX, pixelY};
     }
 
 
-	
-
-	
+	public static void drawPoints(ArrayList<Vector2D> points){
+		userPoints = points;
+	}
 
 	public static void rescaleRobot() {
-		robotImgHeight = robotImage.getHeight();
-		robotDisplayWidth = (int) (Constants.DISPLAY_SCALE.getDouble() * Constants.ROBOT_WIDTH.getDouble()); //width of robot in pixels
-		robotScale = (double) robotDisplayWidth / robotImgHeight; //scaling robot image to fit display width.
+		double robotDisplayWidth = Constants.DISPLAY_SCALE.getDouble() * Constants.ROBOT_WIDTH.getDouble(); //width of robot in pixels
+		robotScale = (double) robotDisplayWidth / robotImage.getWidth(); //scaling robot image to fit display width
 	}
 
 

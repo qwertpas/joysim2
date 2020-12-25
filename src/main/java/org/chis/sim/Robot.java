@@ -1,5 +1,7 @@
 package org.chis.sim;
 
+import org.chis.sim.Util.Vector2D;
+
 //overarching physics simulation
 public class Robot{
 
@@ -93,6 +95,10 @@ public class Robot{
         x += 0.5 * (linVelo + linVeloPrev) * dt * Math.cos(heading);
         y += 0.5 * (linVelo + linVeloPrev) * dt * Math.sin(heading);
         linVeloPrev = linVelo;
+    }
+
+    public Vector2D getPos(){
+        return new Vector2D(x, y, Vector2D.Type.CARTESIAN);
     }
 
 
