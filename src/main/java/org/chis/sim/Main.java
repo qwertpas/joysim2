@@ -13,8 +13,6 @@ public class Main {
     public static Motor leftMotor = new Motor();
     public static Motor rightMotor = new Motor();
     public static Robot robot;
-    public static GraphicDebug debug;
-
 
     public static void main(String[] args) {
 
@@ -58,12 +56,14 @@ public class Main {
 
         public void run(){
             UserCode.initialize();
-            GraphicDebug.turnOnAll(); //displaying the graphs
+            Printouts printouts = new Printouts();
+
             while(!exit) {
                 if(!paused){
                     UserCode.execute();
                     Controls.updateControls();
-                    GraphicDebug.paintAll();    
+                    printouts.repaint();
+                    GraphicDash.paintAll();
                 }
                 try{
                     Thread.sleep(20);

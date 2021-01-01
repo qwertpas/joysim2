@@ -167,70 +167,64 @@ public class Util {
   }
 
   public static class PID {
-    // constants
-    double kP, kI, kD = 0;
-    double tolerance;
+    double kP;
+    double kI, IworkingRange, ImaxValue;
+    double kD, lastError;
+    long lastTime;
 
-    double currentValue, target, error, lastError;
-    double P, I, D, power = 0;
+    double P, I, D, power;
 
     Boolean initialized = false;
-    Boolean inTolerance = false;
-
-    public PID(double kP, double kI, double kD, double tolerance) {
-      this.kP = kP;
-      this.kI = kI;
-      this.kD = kD;
-      this.tolerance = tolerance;
-    }
-
     public void loop(double currentValue, double target) {
-      this.currentValue = currentValue;
-      this.target = target;
       if (!initialized) {
-        lastError = this.target;
+        lastError = target;
+        lastTime = System.nanoTime();
         initialized = true;
       }
-      error = this.target - this.currentValue;
 
-      if (Math.abs(error) < tolerance) {
-        I = 0;
-        inTolerance = true;
-      } else {
-        inTolerance = false;
-      }
+      double error = target - currentValue;
+      double dt = (System.nanoTime() - lastTime) * 1e-9;
+      lastTime = System.nanoTime();
 
       P = kP * error;
-      I = I + (kI * error);
-      D = kD * (lastError - error);
+
+      if(kI != 0 && Math.abs(I) < IworkingRange){
+        I += kI * error * dt;
+        I = limit(I, ImaxValue);
+      }else{
+        I = 0;
+      }
+
+      D = kD * (lastError - error) / dt;
 
       power = P + I + D;
     }
 
-    public Boolean inTolerance() {
-      return inTolerance;
-    }
-
-    public double getPower() {
+    public double getPower(){
       return power;
     }
 
-    public double getError() {
-      return error;
+    public void setkP(double newkP){
+      kP = newkP;
+    }
+    public void setkI(double newkI, double newWorkingRange, double newMaxValue){
+      kI = newkI;
+      IworkingRange = newWorkingRange;
+      ImaxValue = newMaxValue;
+    }
+    public void setkD(double newkD){
+      kD = newkD;
     }
 
-    public void resetPID() {
-      P = 0;
-      I = 0;
-      D = 0;
+    public void copyConstants(PID other){
+      this.kP = other.kP;
+      this.kI = other.kD;
+      this.IworkingRange = other.IworkingRange;
+      this.ImaxValue = other.ImaxValue;
+      this.kD = other.kD;
     }
 
-    public void debugPID() {
-      // System.out.println("PID DEBUG ERROR: " + getError());
-      // System.out.println("PID DEBUG TARGET: " + this.target);
-      // System.out.println("PID DEBUG CURRENT VALUE: " + this.currentValue);
 
-    }
   }
 
   private static final double kThrottleDeadband = 0.05;
@@ -442,8 +436,21 @@ public class Util {
       return Math.sqrt(x * x + y * y);
     }
 
+    public double dist(Vector2D otherVec){
+      return this.subtract(otherVec).getMagnitude();
+    }
+
     public double getAngle() {
       return Math.atan2(y, x);
+    }
+
+    public boolean equals(Vector2D comparison){
+      double epsilon = 1e-10; //close enough to 10 decimal places
+      return Math.abs(this.x - comparison.x) < epsilon && Math.abs(this.y - comparison.y) < epsilon;
+    }
+
+    public boolean equals(Vector2D comparison, double epsilon){
+      return Math.abs(this.x - comparison.x) < epsilon && Math.abs(this.y - comparison.y) < epsilon;
     }
 
     public String toString() {

@@ -204,8 +204,37 @@ public class GraphicDebug extends JPanel{
                 return;
             }
         }
-
         prints.add(text + ": " + number);
+    }
+
+    /**
+     * Prints the number and its label on the GraphicDebug window. Run this every time you want to update the number.
+     * @param text What the number means.
+     * @param number The number you want to print
+     */
+    public void putNumber(String text, double number, GraphicDebug graph){
+        for(int i = 0; i < prints.size(); i++){
+            if(prints.get(i).startsWith(text)){
+                prints.set(i, text + ": " + number);
+                return;
+            }
+        }
+        prints.add(text + ": " + number);
+    }
+
+    /**
+     * Prints the number and its label on the GraphicDebug window. Run this every time you want to update the number.
+     * @param text What the number means.
+     * @param number The number you want to print
+     */
+    public void put(String text, Object object){
+        for(int i = 0; i < prints.size(); i++){
+            if(prints.get(i).startsWith(text)){
+                prints.set(i, text + ": " + object);
+                return;
+            }
+        }
+        prints.add(text + ": " + object);
     }
 
     void calcScales(){

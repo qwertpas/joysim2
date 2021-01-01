@@ -13,6 +13,7 @@ import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
+import org.chis.sim.GraphicDebug.Serie;
 import org.chis.sim.Util.Vector2D;
 
 //draws the robot
@@ -30,7 +31,8 @@ public class GraphicSim extends JPanel {
 
 	public static String imagesDirectory = "./src/images/";
 
-	public static ArrayList<Vector2D> userPoints = new ArrayList<Vector2D>();
+	public static ArrayList<Vector2D> userPointsRobot = new ArrayList<Vector2D>();
+	public static ArrayList<Vector2D> userPointsGlobal = new ArrayList<Vector2D>();
 
 	public static void init(){
 		screenWidth = (int) Toolkit.getDefaultToolkit().getScreenSize().getWidth();
@@ -84,6 +86,21 @@ public class GraphicSim extends JPanel {
 			g.drawLine(-windowWidth/2, -iy, windowWidth/2, -iy);
 		}
 
+		//draw global points
+		if(userPointsGlobal.size() > 0){
+			g.setColor(Color.BLUE);
+			// for(Vector2D pos : userPointsGlobal){
+			// 	int[] scaledPos = meterToPixel(pos.x, pos.y);
+			// 	g.fillOval(scaledPos[0], scaledPos[1], 3, 3);
+			// }
+			for(int i = 0; i < userPointsGlobal.size() - 1; i++){
+				int[] scaledPos1 = meterToPixel(userPointsGlobal.get(i).x, userPointsGlobal.get(i).y);
+				int[] scaledPos2 = meterToPixel(userPointsGlobal.get(i + 1).x, userPointsGlobal.get(i + 1).y);
+
+				g.drawLine(scaledPos1[0], scaledPos1[1], scaledPos2[0], scaledPos2[1]);
+			}
+		}
+			
 		//robot transform in pixels
 		int[] robotPixelPos = meterToPixel(Main.robot.x, Main.robot.y);
 		g2d.translate(robotPixelPos[0], robotPixelPos[1]);
@@ -94,12 +111,15 @@ public class GraphicSim extends JPanel {
 		g.drawImage(robotImage, -robotImage.getWidth()/2, -robotImage.getHeight()/2, this);
 		g2d.scale(1/robotScale, 1/robotScale);
 
-		//draw points at pixel scale
-		g.setColor(Color.RED);
-		for(Vector2D pos : userPoints){
-			int[] scaledPos = meterToPixel(pos.x, pos.y);
-			g.fillOval(scaledPos[0], scaledPos[1], 3, 3);
+		//draw robot relative points
+		if(userPointsRobot.size() > 0){
+			g.setColor(Color.RED);
+			for(Vector2D pos : userPointsRobot){
+				int[] scaledPos = meterToPixel(pos.x, pos.y);
+				g.fillOval(scaledPos[0], scaledPos[1], 3, 3);
+			}
 		}
+		
 
 	}
 
@@ -111,9 +131,12 @@ public class GraphicSim extends JPanel {
         return new int[] {pixelX, pixelY};
     }
 
+	public static void drawPointsRobot(ArrayList<Vector2D> points){
+		userPointsRobot = points;
+	}
 
-	public static void drawPoints(ArrayList<Vector2D> points){
-		userPoints = points;
+	public static void drawPointsGlobal(ArrayList<Vector2D> points){
+		userPointsGlobal = points;
 	}
 
 	public static void rescaleRobot() {
