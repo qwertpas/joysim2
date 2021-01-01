@@ -60,6 +60,7 @@ public class Main {
 
             while(!exit) {
                 if(!paused){
+                    GraphicSim.clearDrawing();
                     UserCode.execute();
                     Controls.updateControls();
                     printouts.repaint();

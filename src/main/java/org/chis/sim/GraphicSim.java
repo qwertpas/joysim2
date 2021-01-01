@@ -8,12 +8,13 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
-import org.chis.sim.GraphicDebug.Serie;
 import org.chis.sim.Util.Vector2D;
 
 //draws the robot
@@ -31,8 +32,8 @@ public class GraphicSim extends JPanel {
 
 	public static String imagesDirectory = "./src/images/";
 
-	public static ArrayList<Vector2D> userPointsRobot = new ArrayList<Vector2D>();
-	public static ArrayList<Vector2D> userPointsGlobal = new ArrayList<Vector2D>();
+	public static List<Serie> userPointsRobot = Collections.synchronizedList(new ArrayList<Serie>());
+	public static List<Serie> userPointsGlobal = Collections.synchronizedList(new ArrayList<Serie>());
 
 	public static void init(){
 		screenWidth = (int) Toolkit.getDefaultToolkit().getScreenSize().getWidth();
@@ -87,19 +88,17 @@ public class GraphicSim extends JPanel {
 		}
 
 		//draw global points
-		if(userPointsGlobal.size() > 0){
-			g.setColor(Color.BLUE);
-			// for(Vector2D pos : userPointsGlobal){
-			// 	int[] scaledPos = meterToPixel(pos.x, pos.y);
-			// 	g.fillOval(scaledPos[0], scaledPos[1], 3, 3);
-			// }
-			for(int i = 0; i < userPointsGlobal.size() - 1; i++){
-				int[] scaledPos1 = meterToPixel(userPointsGlobal.get(i).x, userPointsGlobal.get(i).y);
-				int[] scaledPos2 = meterToPixel(userPointsGlobal.get(i + 1).x, userPointsGlobal.get(i + 1).y);
-
-				g.drawLine(scaledPos1[0], scaledPos1[1], scaledPos2[0], scaledPos2[1]);
+		synchronized(userPointsGlobal){
+			for(Serie serie : userPointsGlobal){
+				g.setColor(serie.color);
+				for(int i = 0; i < serie.points.size() - 1; i++){
+					int[] scaledPos1 = meterToPixel(serie.points.get(i).x, serie.points.get(i).y);
+					int[] scaledPos2 = meterToPixel(serie.points.get(i + 1).x, serie.points.get(i + 1).y);
+					g.drawLine(scaledPos1[0], scaledPos1[1], scaledPos2[0], scaledPos2[1]);
+				}
 			}
 		}
+			
 			
 		//robot transform in pixels
 		int[] robotPixelPos = meterToPixel(Main.robot.x, Main.robot.y);
@@ -112,18 +111,20 @@ public class GraphicSim extends JPanel {
 		g2d.scale(1/robotScale, 1/robotScale);
 
 		//draw robot relative points
-		if(userPointsRobot.size() > 0){
-			g.setColor(Color.RED);
-			for(Vector2D pos : userPointsRobot){
-				int[] scaledPos = meterToPixel(pos.x, pos.y);
-				g.fillOval(scaledPos[0], scaledPos[1], 3, 3);
+		synchronized(userPointsRobot){
+			for(Serie serie : userPointsRobot){
+				g.setColor(serie.color);
+				for(int i = 0; i < serie.points.size() - 1; i++){
+					int[] scaledPos1 = meterToPixel(serie.points.get(i).x, serie.points.get(i).y);
+					int[] scaledPos2 = meterToPixel(serie.points.get(i + 1).x, serie.points.get(i + 1).y);
+					g.drawLine(scaledPos1[0], scaledPos1[1], scaledPos2[0], scaledPos2[1]);
+				}
 			}
 		}
-		
+			
 
 	}
 
-	
 	
     public int[] meterToPixel(double xMeters, double yMeters){
         int pixelX = (int) (xMeters * Constants.DISPLAY_SCALE.getDouble());
@@ -131,17 +132,30 @@ public class GraphicSim extends JPanel {
         return new int[] {pixelX, pixelY};
     }
 
-	public static void drawPointsRobot(ArrayList<Vector2D> points){
-		userPointsRobot = points;
+	public static void addDrawingRobot(ArrayList<Vector2D> path, Color color){
+		synchronized(userPointsRobot){
+			userPointsRobot.add(new Serie("robotDrawing", color, path));
+		}
 	}
 
-	public static void drawPointsGlobal(ArrayList<Vector2D> points){
-		userPointsGlobal = points;
+	public static void addDrawingGlobal(ArrayList<Vector2D> path, Color color){
+		synchronized(userPointsGlobal){
+			userPointsGlobal.add(new Serie("globalDrawing", color, path));
+		}	
+	}
+	
+	public static void clearDrawing(){
+		userPointsGlobal.clear();
+		userPointsRobot.clear();
 	}
 
 	public static void rescaleRobot() {
 		double robotDisplayWidth = Constants.DISPLAY_SCALE.getDouble() * Constants.ROBOT_WIDTH.getDouble(); //width of robot in pixels
 		robotScale = (double) robotDisplayWidth / robotImage.getWidth(); //scaling robot image to fit display width
+	}
+
+	public static class PathPlotter{
+		
 	}
 
 

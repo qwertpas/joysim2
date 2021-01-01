@@ -1,14 +1,57 @@
-package org.chis.sim.userclasses.pathplanning;
+package org.chis.sim.userclasses.paths;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 import org.chis.sim.Util.Vector2D;
 import org.chis.sim.Util.Vector2D.Type;
 
 
 public class PurePursuit {
+
+    //doesn't change much
+    ArrayList<Vector2D> globalPath;
+    double lookaheadDist;
+    double trackWidth;
+    double maxVelo;
+
+    //changes throughout path
+    Vector2D lookahead;
+    public double curvature;
+    public double distRemaining;
+
+    public PurePursuit(ArrayList<Vector2D> globalPath_input, double lookaheadDist_input, double trackWidth_input, double maxVelo_input){
+        globalPath = globalPath_input;
+        lookaheadDist = lookaheadDist_input;
+        trackWidth = trackWidth_input;
+        maxVelo = maxVelo_input;
+    }
+
+    public double[] getVelocities(Vector2D robotPos, double robotHeading, double speed){
+        ArrayList<Vector2D> robotPath = new ArrayList<Vector2D>();
+        for(Vector2D point : globalPath){
+            robotPath.add(point.subtract(robotPos).rotate(-robotHeading));
+        }
+
+        double vC = speed;
+        distRemaining = robotPath.get(robotPath.size() - 1).getMagnitude();
+        if(distRemaining < lookaheadDist) vC = speed * distRemaining / lookaheadDist;
+
+        lookahead = getLookaheadPoint(robotPath, 0, 0, lookaheadDist);
+        if(lookahead != null){
+            curvature = 2 * lookahead.y / Math.pow(lookahead.getMagnitude(), 2);
+        }
+
+        double vL = vC * (1 - trackWidth * curvature);
+        double vR = vC * (1 + trackWidth * curvature);
+
+        if (Math.abs(vL) > maxVelo || Math.abs(vR) > maxVelo) {
+            double biggerValue = Math.max(Math.abs(vL), Math.abs(vR));
+            vL = vL / biggerValue;
+            vR = vR / biggerValue;
+        }
+
+        return new double[] {vL, vR};
+    }
     
     /**
      * Returns the sign of the input number n. Note that the function returns 1 for n = 0 to satisfy the requirements
@@ -22,14 +65,14 @@ public class PurePursuit {
         else return Math.signum(n);
     }
 
-    public static double getCurvature(ArrayList<Vector2D> path, double r){
-        double curvature = 0;
-        Vector2D lookahead = getLookaheadPoint(path, 0, 0, r);
-        if(lookahead != null){
-            curvature = 2 * lookahead.y / Math.pow(lookahead.getMagnitude(), 2);
-        }
-        return curvature;
-    }
+    // public static double getCurvature(ArrayList<Vector2D> path, double r){
+    //     double curvature = 0;
+    //     Vector2D lookahead = getLookaheadPoint(path, 0, 0, r);
+    //     if(lookahead != null){
+    //         curvature = 2 * lookahead.y / Math.pow(lookahead.getMagnitude(), 2);
+    //     }
+    //     return curvature;
+    // }
 
 
     /**

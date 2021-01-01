@@ -75,7 +75,7 @@ public class GraphicInput extends JFrame implements ActionListener {
 
         if(event.getSource() == buttonReset){
             Main.robot.init();
-            GraphicDebug.resetAll();
+            GraphicDash.resetAll();
             GraphicSim.sim.repaint();
             System.out.println("Resetted");
             Main.startTime = System.nanoTime();
